@@ -7,12 +7,12 @@ String log_message(Sending_data & sending_data){
     return "more data";
 }
 
-String get_data_payload( QueueHandle_t tx_logs_queue,  time_t start_time){
+String get_data_payload(QueueHandle_t & tx_logs_queue, time_t start_time){
 
     Sending_data sending_data;
     
     String PostData="{\"streams\": [";
-    int max_number_of_logs = 100;
+    int max_number_of_logs = 0;
     {
       int i;
       for(i = 0; i < max_number_of_logs; i++){
@@ -21,27 +21,27 @@ String get_data_payload( QueueHandle_t tx_logs_queue,  time_t start_time){
           &sending_data, 
           10 ) == pdPASS)
         {
-          PostData = "{ \"stream\": { \"log_type\": \"control_loop\", \"run_number\": \"5\" }, \"values\": [ [ \"" +
+          PostData += "{ \"stream\": { \"log_type\": \"control_loop\", \"run_number\": \"5\" }, \"values\": [ [ \"" +
           get_time(start_time, sending_data.control_start_time) + 
           "\", \"" + 
           log_message(sending_data)+"\"] ] }," + 
           PostData;
         }
       }
-//      if (i == max_number_of_logs){
-//          PostData = "{ \"stream\": { \"log_type\": \"warning\", \"run_number\": \"5\" }, \"values\": [ [ \"" +
-//          get_time(start_time, millis()) + 
-//          "\", \"" + 
-//          "There were more logs but we stopped"+
-//          "\"] ] }," + 
-//          PostData;
-//      }
+      if (i == max_number_of_logs){
+          PostData += "{ \"stream\": { \"log_type\": \"warning\", \"run_number\": \"5\" }, \"values\": [ [ \"" +
+          get_time(start_time, millis()) + 
+          "\", \"" + 
+          "There were more logs but we stopped"+
+          "\"] ] },";
+      }
     }
     Serial.println(PostData);
     PostData.setCharAt(PostData.lastIndexOf(','), ' ');
    
       PostData += "]} \n";
 //    PostData += "{ \"stream\": { \"foo\": \"bar3\" }, \"values\": [ [ \"1628498939000000178\", \"fizzbuzz28 dfd\"] ] }]}";
+    delay(100); // will pause Zero, Leonardo, etc until serial console opens
 
     return PostData;
 
@@ -90,6 +90,7 @@ void communication_log_loop(void * parameter){
     }
 
     client.stop();
+    delay(1000);
     
   }
 }
