@@ -1,6 +1,6 @@
 
 String get_time(time_t start_time, unsigned long passed_millis){ 
-  return String(start_time + passed_millis/1000) + (passed_millis % 1000)+"000000";
+  return String(start_time + passed_millis/1000) + String(passed_millis % 1000)+"000000";
 }
 
 String log_message(Sending_data & sending_data){
@@ -37,11 +37,11 @@ void communication_log_loop(void * parameter){
   time_t start_time;
   time(&start_time);
 
-  String PostData = get_data_payload(tx_logs_queue, start_time);
-
+  
   Serial.println(String("comm log loop() running on core ") + xPortGetCoreID());
   
   for(;;){
+    String PostData = get_data_payload(tx_logs_queue, start_time);
     WiFiClient client;
     const char* host = "192.168.1.134";
     if (!client.connect(host, 3100)) {
