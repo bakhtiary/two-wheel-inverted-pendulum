@@ -9,7 +9,6 @@ void control_loop( void * parameter) {
   
     for(;;)
     {
-      delay(1); // will pause Zero, Leonardo, etc until serial console opens
       time_t start_time = millis();
 
 //      Serial.print("loop() task1 running on core ");

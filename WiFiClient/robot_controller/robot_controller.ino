@@ -47,7 +47,7 @@ void setup()
       return;
     }
   
-    QueueHandle_t tx_log_queue = xQueueCreate( 5, sizeof( Sending_data ) );
+    QueueHandle_t tx_log_queue = xQueueCreate( 100, sizeof( Sending_data ) );
     QueueHandle_t rx_robot_parameters_queue = xQueueCreate( 5, sizeof(Sending_data));
     TaskHandle_t Task1;
     TaskHandle_t Task2;
