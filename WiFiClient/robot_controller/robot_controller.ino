@@ -16,7 +16,7 @@ struct Shared_data{
 void setup()
 {
     Serial.begin(115200);
-    delay(10);
+    delay(1);
 
     // We start by connecting to a WiFi network
 

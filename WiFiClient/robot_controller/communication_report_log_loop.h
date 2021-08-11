@@ -12,18 +12,35 @@ String get_data_payload( QueueHandle_t tx_logs_queue,  time_t start_time){
     Sending_data sending_data;
     
     String PostData="{\"streams\": [";
-    for(int i = 0; i < 100; i++){
-      if (xQueueReceive(
-        tx_logs_queue,
-        &sending_data, 
-        10 ) == pdPASS)
-      {
-//        PostData += "hi \n";
+    int max_number_of_logs = 100;
+    {
+      int i;
+      for(i = 0; i < max_number_of_logs; i++){
+        if (xQueueReceive(
+          tx_logs_queue,
+          &sending_data, 
+          10 ) == pdPASS)
+        {
+          PostData = "{ \"stream\": { \"log_type\": \"control_loop\", \"run_number\": \"5\" }, \"values\": [ [ \"" +
+          get_time(start_time, sending_data.control_start_time) + 
+          "\", \"" + 
+          log_message(sending_data)+"\"] ] }," + 
+          PostData;
+        }
       }
+//      if (i == max_number_of_logs){
+//          PostData = "{ \"stream\": { \"log_type\": \"warning\", \"run_number\": \"5\" }, \"values\": [ [ \"" +
+//          get_time(start_time, millis()) + 
+//          "\", \"" + 
+//          "There were more logs but we stopped"+
+//          "\"] ] }," + 
+//          PostData;
+//      }
     }
+    Serial.println(PostData);
+    PostData.setCharAt(PostData.lastIndexOf(','), ' ');
    
-    
-    PostData += "{ \"stream\": { \"log_type\": \"control_loop\", \"run_number\": \"5\" }, \"values\": [ [ \"" + get_time(start_time, sending_data.control_start_time) + "\", \""+ log_message(sending_data)+"\"] ] }]} \n";
+      PostData += "]} \n";
 //    PostData += "{ \"stream\": { \"foo\": \"bar3\" }, \"values\": [ [ \"1628498939000000178\", \"fizzbuzz28 dfd\"] ] }]}";
 
     return PostData;
@@ -37,7 +54,6 @@ void communication_log_loop(void * parameter){
   time_t start_time;
   time(&start_time);
 
-  
   Serial.println(String("comm log loop() running on core ") + xPortGetCoreID());
   
   for(;;){
