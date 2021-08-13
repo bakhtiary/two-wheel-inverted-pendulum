@@ -1,7 +1,5 @@
 Adafruit_MPU6050 mpu;
 
-
-
 void control_loop( void * parameter) {
     Shared_data * shared_data = (Shared_data *) parameter;
     QueueHandle_t tx_logs_queue = shared_data->tx_logs;
@@ -16,8 +14,6 @@ void control_loop( void * parameter) {
     
       sensors_event_t a, g, temp;
       mpu.getEvent(&a, &g, &temp);
-
-      
 
       time_t end_time = millis();
 

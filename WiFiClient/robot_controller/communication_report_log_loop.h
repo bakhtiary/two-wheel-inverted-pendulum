@@ -18,7 +18,7 @@ String get_data_payload(QueueHandle_t & tx_logs_queue, time_t start_time){
     Sending_data sending_data;
     
     String PostData="{\"streams\": [";
-    int max_number_of_logs = 3;
+    int max_number_of_logs = 10;
     {
       int i;
       PostData += "{ \"stream\": { \"log_type\": \"control_loop\", \"run_number\": \"5\" }, \"values\": [ ";
@@ -66,7 +66,7 @@ void communication_log_loop(void * parameter){
   Serial.println(String("comm log loop() running on core ") + xPortGetCoreID());
   
   for(;;){
-    delay(1000);
+    delay(100);
     String PostData = get_data_payload(tx_logs_queue, start_time);
     WiFiClient client;
     const char* host = "192.168.1.134";
@@ -89,7 +89,7 @@ void communication_log_loop(void * parameter){
 
     unsigned long timeout = millis();
     while (client.available() == 0) {
-        if (millis() - timeout > 5000) {
+        if (millis() - timeout > 100) {
             Serial.println(">>> Client Timeout !");
         }
     }
