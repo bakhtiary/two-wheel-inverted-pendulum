@@ -14,6 +14,10 @@ const char* password = "m4eEUQGF";
 const char* host = "192.168.1.134";
 const int httpPort = 12345;
 
+// Use WiFiClient class to create TCP connections
+WiFiClient client;
+
+
 void setup()
 {
     Serial.begin(115200);
@@ -37,50 +41,32 @@ void setup()
     Serial.println("WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
+    if (!client.connect(host, httpPort)) {
+      Serial.println("connection failed");
+    }
 }
 
 int value = 0;
 
 void loop()
 {
-    delay(5000);
     ++value;
 
-    Serial.print("connecting to ");
-    Serial.println(host);
+//    Serial.print(String("sending data ") + value + "\n");
 
-    // Use WiFiClient class to create TCP connections
-    WiFiClient client;
-    if (!client.connect(host, httpPort)) {
-        Serial.println("connection failed");
-        return;
-    }
-
-    // We now create a URI for the request
-    String url = "/input/";
-
-    Serial.print("Requesting URL: ");
-    Serial.println(url);
-
-    // This will send the request to the server
-    client.print(String("GET ") + url + " HTTP/1.1\r\n" +
-                 "Host: " + host + "\r\n" +
-                 "Connection: close\r\n\r\n");
+    client.print(String("some data\n") + value);
     unsigned long timeout = millis();
-    while (client.available() == 0) {
-        if (millis() - timeout > 5000) {
-            Serial.println(">>> Client Timeout !");
-            client.stop();
-            return;
-        }
+
+    if (!client.connected()){
+        Serial.println(">>> client disconnected !");
+        client.stop();
+        client.connect(host, httpPort);     
     }
 
     // Read all the lines of the reply from server and print them to Serial
     while(client.available()) {
-        String line = client.readStringUntil('\r');
+        String line = client.readStringUntil('.');
         Serial.print(line);
     }
 
-    Serial.println();
-    Serial.println("closing connection");
 }
