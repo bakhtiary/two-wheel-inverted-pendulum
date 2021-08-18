@@ -41,15 +41,19 @@ void setup()
     Serial.println("WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
-    if (!client.connect(host, httpPort)) {
-      Serial.println("connection failed");
-    }
 }
 
 int value = 0;
 
 void loop()
 {
+
+    if (!client.connected()){
+        Serial.println(">>> client disconnected !");
+        client.stop();
+        client.connect(host, httpPort);     
+    }
+    
     ++value;
 
 //    Serial.print(String("sending data ") + value + "\n");
@@ -57,11 +61,6 @@ void loop()
     client.print(String("some data\n") + value);
     unsigned long timeout = millis();
 
-    if (!client.connected()){
-        Serial.println(">>> client disconnected !");
-        client.stop();
-        client.connect(host, httpPort);     
-    }
 
     // Read all the lines of the reply from server and print them to Serial
     while(client.available()) {
