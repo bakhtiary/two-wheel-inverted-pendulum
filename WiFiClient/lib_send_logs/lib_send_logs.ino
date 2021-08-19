@@ -8,15 +8,13 @@
 
 #include <WiFi.h>
 
+
 const char* ssid     = "MIWIFI_jTA4";
 const char* password = "m4eEUQGF";
 
-const char* host = "192.168.1.134";
-const int httpPort = 12345;
 
 // Use WiFiClient class to create TCP connections
-WiFiClient client;
-
+#include "data_sender.h"
 
 void setup()
 {
@@ -42,30 +40,19 @@ void setup()
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
 }
+char* host = "192.168.1.134";
+int httpPort = 12345;
 
-int value = 0;
+class MydataStuff{
+public:
+  int x;
+  int y;
+};
+
+DataSender <MydataStuff> dataSender(host,httpPort);
 
 void loop()
 {
-
-    if (!client.connected()){
-        Serial.println(">>> client disconnected !");
-        client.stop();
-        client.connect(host, httpPort);     
-    }
-    
-    ++value;
-
-//    Serial.print(String("sending data ") + value + "\n");
-
-    client.print(String("some data\n") + value);
-    unsigned long timeout = millis();
-
-
-    // Read all the lines of the reply from server and print them to Serial
-    while(client.available()) {
-        String line = client.readStringUntil('.');
-        Serial.print(line);
-    }
-
+    MydataStuff data_stuff{10,11};
+    dataSender.send_data(data_stuff);
 }

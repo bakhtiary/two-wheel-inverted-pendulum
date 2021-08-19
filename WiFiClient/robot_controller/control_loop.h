@@ -1,4 +1,4 @@
-
+#include <data_sender.h>
 
 Adafruit_MPU6050 mpu;
 
@@ -19,8 +19,9 @@ void control_loop( void * parameter) {
 
       time_t end_time = millis();
 
-      Sending_data sendingdata{start_time, end_time, a, g};
-      xQueueSend(tx_logs_queue, &sendingdata, portMAX_DELAY);
+      send_data();
+//      Sending_data sendingdata{start_time, end_time, a, g};
+//      xQueueSend(tx_logs_queue, &sendingdata, portMAX_DELAY);
     }
 
 }

@@ -1,9 +1,20 @@
 import select
 import socket
-
+import construct
+from construct import Struct, Const, Int8ub, Array, this, Byte, Int32ub, Int32ul, Rebuffered, GreedyRange
 
 HOST = '0.0.0.0'  # Standard loopback interface address (localhost)
 PORT = 12345        # Port to listen on (non-privileged ports are > 1023)
+
+format = Struct(
+     # "signature" / Const(b"BMP"),
+     "width" / Int32ul,
+     "height" / Int32ul,
+     # "pixels" / Array(this.width * this.height, Byte),
+)
+
+t = format.parse(b'\n\x00'*100)
+chunk_size = len(format.build(t))
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
@@ -13,6 +24,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
         try:
             conns = [s]
+
             while True:
                 try:
                     ready_to_read, ready_to_write, in_error = \
@@ -28,12 +40,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     if cur_conn == s:
                         print("going to accept")
                         conn, addr = s.accept()
+
                         print(conn)
                         conns.append(conn)
                     else:
-                        recv = cur_conn.recv(16)
+                        recv = cur_conn.recv(2048)
+                        print(recv)
+                        val = GreedyRange(format).parse(recv)
+                        print(f'received:{val,len(recv)}')
+
+                        # print(f" rec{val}")
                         # do stuff with received data
-                        print(f'received: {recv}')
                 # for cur_conn in ready_to_write:
                 #     # connection established, send some stuff
                 #     cur_conn.send(b'.\n.')
