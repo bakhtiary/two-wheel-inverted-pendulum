@@ -1,10 +1,10 @@
+#include <WiFi.h>
 
-
-WiFiClient client;
 
 template<class SENDTYPE>
 class DataSender{
   public: 
+  WiFiClient client;
   int value;
   String host;
   int port;
@@ -28,6 +28,7 @@ class DataSender{
 
     client.write((char*)&data_to_send, sizeof(SENDTYPE));
     unsigned long timeout = millis();
+//    Serial.print(String("sending data ") + sizeof(SENDTYPE) + " bytes \n");
 
     // Read all the lines of the reply from server and print them to Serial
     while(client.available()) {

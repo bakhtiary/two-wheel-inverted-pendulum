@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 flask = "*"
 construct = "*"
+protobuf = "*"
+protobuf-setuptools = "*"
 
 [dev-packages]
 

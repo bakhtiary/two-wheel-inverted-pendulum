@@ -1,23 +1,34 @@
 
-#include <data_sender.h>
-
 #include <WiFi.h>
+#include <data_sender.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
-struct Shared_data{
-  QueueHandle_t tx_logs, rx_robot_parameters;
-};
+
+const char* ssid     = "MIWIFI_jTA4";
+const char* password = "m4eEUQGF";
+char* host = "192.168.1.134";
+int httpPort = 12345;
+Adafruit_MPU6050 mpu;
+
 #include "sending_data.h"
-#include "control_loop.h"
-#include "communication_loop.h"
-#include "communication_report_log_loop.h"
+
+DataSender <Sending_data> sender(host,httpPort);
+
 
 void setup()
 {
     Serial.begin(115200);
-    delay(1);
+    while (!Serial)
+      delay(10); // will pause Zero, Leonardo, etc until serial console opens
+    
+    if (!mpu.begin()) {
+    Serial.println("Failed to find MPU6050 chip");
+      while (1) {
+        delay(10);
+      }
+    }
 
     // We start by connecting to a WiFi network
 
@@ -36,58 +47,30 @@ void setup()
     Serial.println("");
     Serial.println("WiFi connected");
     Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
+    Serial.println(WiFi.localIP()); 
 
-    configTime(0, 0, "pool.ntp.org");
-
-    tm timeinfo;
-    if(!getLocalTime(&timeinfo)){
-      Serial.println("Failed to setup time");
-      Serial.println("Failed to setup time");
-      Serial.println("Failed to setup time");
-      return;
-    }
-  
-    QueueHandle_t tx_log_queue = xQueueCreate( 100, sizeof( Sending_data ) );
-    QueueHandle_t rx_robot_parameters_queue = xQueueCreate( 5, sizeof(Sending_data));
-    TaskHandle_t Task1;
-    TaskHandle_t Task2;
-    TaskHandle_t communication_log_task;
-    Shared_data * shared_data = new Shared_data{tx_log_queue , rx_robot_parameters_queue};
-    xTaskCreatePinnedToCore(
-      control_loop, /* Function to implement the task */
-      "control_loop", /* Name of the task */
-      10000,  /* Stack size in words */
-      shared_data,  /* Task input parameter */
-      0,  /* Priority of the task */
-      &Task1,  /* Task handle. */
-      1); /* Core where the task should run */
-
-    xTaskCreatePinnedToCore(
-      communication_log_loop, /* Function to implement the task */
-      "communication_log_loop", /* Name of the task */
-      10000,  /* Stack size in words */
-      shared_data,  /* Task input parameter */
-      0,  /* Priority of the task */
-      &communication_log_task,  /* Task handle. */
-      0); /* Core where the task should run */
-  
     
-//    xTaskCreatePinnedToCore(
-//      communication_loop, /* Function to implement the task */
-//      "communication_loop", /* Name of the task */
-//      10000,  /* Stack size in words */
-//      &shared_data,  /* Task input parameter */
-//      0,  /* Priority of the task */
-//      &Task1,  /* Task handle. */
-//      0); /* Core where the task should run */
 }
 
-
+unsigned long loop_number = 0;
 
 void loop()
 {
-  Serial.print("MAIN loop() is alive and running on core ");
-  Serial.println(xPortGetCoreID());
-  delay(10000);
+    loop_number += 1;
+    time_t start_time = millis();
+  
+    sensors_event_t a, g, temp;
+    mpu.getEvent(&a, &g, &temp);
+
+    Serial.println("");
+    
+    time_t end_time = millis();
+
+    sensors_vec_t & acc = a.acceleration;
+    sensors_vec_t & gyro = g.gyro;
+        
+    Sending_data sendingdata{loop_number,start_time, end_time, acc.x, acc.y, acc.z, gyro.x, gyro.y, gyro.z};
+    sender.send_data(sendingdata);      
+    Serial.println(String("")+a.acceleration.x);
+    delay(500);
 }
