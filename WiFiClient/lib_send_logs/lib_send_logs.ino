@@ -23,11 +23,6 @@ void setup()
 
     // We start by connecting to a WiFi network
 
-    Serial.println();
-    Serial.println();
-    Serial.print("Connecting to ");
-    Serial.println(ssid);
-
     WiFi.begin(ssid, password);
 
     while (WiFi.status() != WL_CONNECTED) {
@@ -35,13 +30,10 @@ void setup()
         Serial.print(".");
     }
 
-    Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
+    Serial.print("WiFi connected. ");
+    Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
 }
-char* host = "192.168.1.134";
-int httpPort = 12345;
 
 class MydataStuff{
 public:
@@ -49,10 +41,23 @@ public:
   int y;
 };
 
-DataSender <MydataStuff> dataSender(host,httpPort);
+class ControlData{
+public:
+  int x;
+  float y;
+};
+
+char* host = "192.168.1.134";
+int httpPort = 12345;
+DataSender <MydataStuff,ControlData> dataSender(host, httpPort);
 
 void loop()
 {
+    delay(500); 
     MydataStuff data_stuff{10,11};
     dataSender.send_data(data_stuff);
+    ControlData control_data;
+    if (dataSender.get_data(control_data)){
+      Serial.println(String("Got data") + control_data.x + " " + control_data.y);
+    }
 }

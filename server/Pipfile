@@ -6,8 +6,7 @@ name = "pypi"
 [packages]
 flask = "*"
 construct = "*"
-protobuf = "*"
-protobuf-setuptools = "*"
+aiohttp = "*"
 
 [dev-packages]
 
