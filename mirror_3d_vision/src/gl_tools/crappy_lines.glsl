@@ -4,7 +4,7 @@
 
 uniform mat4 ModelViewProjectionMatrix;
 
-layout(location = 0) in vec4 Vertex;
+layout(location = 0) in vec3 Vertex;
 layout(location = 1) in vec4 Color;
 
 out VertexData{
@@ -14,7 +14,7 @@ out VertexData{
 void main(void)
 {
     VertexOut.mColor = vec4( 1.0,1.0,0.0,1.0);
-    gl_Position = ModelViewProjectionMatrix * Vertex;
+    gl_Position = ModelViewProjectionMatrix * vec4(Vertex,1.0);
 }
 
 #elif defined FRAGMENT_SHADER

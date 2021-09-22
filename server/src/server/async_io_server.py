@@ -7,7 +7,7 @@ from server.esp_client_handler import Client_Handler
 from server.web_server import run_ui_web_server
 
 HOST = '0.0.0.0'  # Standard loopback interface address (localhost)
-PORT = 12345  # Port to listen on (non-privileged ports are > 1023)
+PORT = 12345  # Port to listen on (non-privileged po rts are > 1023)
 
 
 if __name__ == '__main__':
