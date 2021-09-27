@@ -15,6 +15,7 @@ class Client_Handler:
         greedy_format = GreedyRange(self.reader_format)
 
         filename = "tmp.log"  # datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')+".log"
+        print("hello!")
 
         with open(filename, "w") as output:
 

@@ -4,7 +4,8 @@ import numpy as np
 import cv2 as cv
 
 # termination criteria
-from gl_tools.visualization_of_camera import runCalibrationViewer
+from Boards import big_board_20x20
+from gl_tools.visualization_of_board import runCalibrationViewer
 
 spot_dims = (4,5)
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -14,17 +15,19 @@ objp[:,:2] = np.mgrid[0:spot_dims[0],0:spot_dims[1]].T.reshape(-1,2)
 # Arrays to store object points and image points from all the images.
 objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
-images = glob("charucho_fotos/1.jpg")
+images = glob("calib_dir/1/*.jpeg")
 image_names = []
-d = cv.aruco_Dictionary.get(cv.aruco.DICT_4X4_50)
-board = cv.aruco.CharucoBoard_create(9,10,0.10,0.08,d)
+
+board = big_board_20x20()
 
 for fname in images:
     img = cv.imread(fname)
+    cv.imshow('img', img)
+    cv.waitKey(500)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     # Find the chess board corners
-    print(f"paring {fname}")
-    corners, ids, res3 = cv.aruco.detectMarkers(img, d)
+    print(f"parsing {fname}")
+    corners, ids, res3 = cv.aruco.detectMarkers(img, board.dictionary)
 
     # If found, add object points, image points (after refining them)
     if corners:
@@ -33,7 +36,17 @@ for fname in images:
         # imgpoints.append(corners)
         image_names.append(fname)
         # Draw and display the corners
-        cv.aruco.drawDetectedMarkers(img,corners)
+        cv.aruco.drawDetectedMarkers(img, corners)
+        retval2, charucoCorners, charucoIds = cv.aruco.interpolateCornersCharuco(corners, ids, img, board)
+
+        all_corners = [np.array(charucoCorners)]
+        all_ids = [charucoIds]
+        counts = [len(charucoIds)]
+
+        # cv.aruco.calibrateCameraCharucoExtended(
+        #     all_corners, np.array(all_ids), board,
+        #     img.shape[0:2], None, None
+        # )
 
         cv.imshow('img', img)
         cv.waitKey(500)

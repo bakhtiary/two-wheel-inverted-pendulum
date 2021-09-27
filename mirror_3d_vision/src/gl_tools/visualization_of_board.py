@@ -1,4 +1,5 @@
 import math
+import multiprocessing
 import os
 import sys
 
@@ -41,28 +42,30 @@ class Composition:
         proj = Matrix44.perspective_projection(45.0, aspect_ratio, 0.1, 200.0)
         lookat = Matrix44.look_at(
             camera_pos,
-            (0.0, 0.0, 0.5),
+            (0.0, 0.0, 20),
             (0.0, 0.0, 1.0),
         )
 
         self.camera_matrix = (proj * lookat).astype("f4")
 
     def add(self, drawable, position, rotation):
-        self.things_to_render.append((drawable, position, rotation))
+        self.things_to_render.append([drawable, position, rotation])
+        return len(self.things_to_render) - 1
+
+    def update_pos_rot(self, index, position, rotation):
+        self.things_to_render[index][1] = position
+        self.things_to_render[index][2] = rotation
 
     def render(self):
         for drawable,pos,rot in self.things_to_render:
             pos_mat = Matrix44.from_translation(pos)
             rot_mat = rodrigues_vec_to_rotation_mat(np.array(rot))
-            drawable.render((self.camera_matrix*rot_mat*pos_mat).astype("f4"))
+            drawable.render((self.camera_matrix*pos_mat*rot_mat).astype("f4"))
 
 
-
-def runCalibrationViewer(camera_pos_list, camera_rot_list, image_name_list):
+def runBoardLocationViewer(location_queue: multiprocessing.Queue):
     class CalibrationViewer(mglw.WindowConfig):
-        camera_pos_list
-        camera_rot_list
-        image_name_list
+
         gl_version = (3, 3)
         title = "ModernGL Example"
         window_size = (1280, 720)
@@ -76,18 +79,23 @@ def runCalibrationViewer(camera_pos_list, camera_rot_list, image_name_list):
 
             self.composition = Composition()
             self.crate = Crate_mesh(self)
-            self.composition.add(Crate_mesh(self), [0,0,0], [])
             self.dist = 40
-            for cam_loc, cam_rot, image_name in zip(camera_pos_list, camera_rot_list, image_name_list):
-                self.composition.add(Camera_wireframe(self, image_name), cam_loc.flatten(), cam_rot.flatten())
             self.angle = 0
+
+            self.board_id = self.composition.add(Crate_mesh(self), [0, 0, 0], [])
 
         def render(self, time, frame_time):
             self.ctx.clear(0.0, 0.0, 0.0)
             self.ctx.enable(moderngl.DEPTH_TEST)
+            angle = self.angle
+
+            if not location_queue.empty():
+                board_rot, board_loc = location_queue.get()
+                print(f"{board_rot}, {board_loc }")
+                self.composition.update_pos_rot(self.board_id, board_loc.flatten(), board_rot.flatten())
 
             self.composition.camera_location(
-                camera_pos = (np.cos(self.angle) * self.dist, np.sin(self.angle) * self.dist, self.dist*0.70),
+                camera_pos=(np.cos(angle) * self.dist, np.sin(angle) * self.dist, self.dist*0.70 + 20),
                 aspect_ratio=self.aspect_ratio
             )
 
@@ -106,36 +114,11 @@ def runCalibrationViewer(camera_pos_list, camera_rot_list, image_name_list):
                 if key == ord('d'):
                     self.angle -= 0.01
 
-
-
-
     mglw.run_window_config(CalibrationViewer)
 
 if __name__ == '__main__':
+    exit(0)
     from numpy import array
-    camera_loc_list = [
-        array([[1.77897703],
-               [0.26029351],
-               [1.11745587]]),
-        array([[-3.27518137], [-2.26986732], [13.21556809]]),
-        array([[-3.20727923], [-3.18571279], [ 9.07769199]]),
-        array( [[-1.81526951], [-2.61015036], [19.02358253]]),
-    ]
-    camera_rot_list = [
-        array([[0.29515454],
-               [-0.39019976],
-               [-3.38643238]]),
+    q = multiprocessing.Queue()
 
-        array([[-0.62631573], [-0.04096639], [ 0.10316385]]),
-        array([[-0.08141961], [-0.04832145], [ 0.06116317]]),
-        array([[-0.00091781], [ 0.09203101], [ 0.09375997]]),
-    ]
-    camera_image_list = [
-
-        "charucho_fotos/1.jpg",
-        "./calib_fotos/10.jpg",
-        "./calib_fotos/11.jpg",
-        "./calib_fotos/12.jpg",
-    ]
-
-    runCalibrationViewer(camera_loc_list, camera_rot_list, camera_image_list)
+    runBoardLocationViewer(q)

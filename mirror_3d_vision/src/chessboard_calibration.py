@@ -3,10 +3,7 @@ from glob import glob
 import numpy as np
 import cv2 as cv
 
-import cv2.aruco
-
-# termination criteria
-from gl_tools.visualization_of_camera import runCalibrationViewer
+from gl_tools.visualization_of_board import runCalibrationViewer
 
 spot_dims = (4,5)
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -41,7 +38,6 @@ for fname in images:
 cv.destroyAllWindows()
 
 ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-
 
 print(tvecs)
 print(rvecs)
