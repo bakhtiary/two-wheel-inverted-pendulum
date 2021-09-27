@@ -45,6 +45,7 @@ def run_ui_web_server(q, control_data):
         data_in_container = Container(data_dict)
         print(data_in_container)
         q.put(data_in_container)
+
         return web.Response(body=get_form(data_in_container),content_type='text/html')
 
     app = web.Application()

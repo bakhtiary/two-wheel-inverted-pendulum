@@ -31,7 +31,8 @@ class Client_Handler:
                     # output.write(f"{r.event_id},{r.start_time},{r.end_time},{r.ax},{r.ay},{r.az},{r.aw},{r.gx},{r.gy},{r.gz},{r.gw}\n")
                     output.write(f"{r}\n")
                     output.flush()
-                if count % 10 == 0:
+
+                if count % 100 == 0:
                     print(f"processed {count} logs.")
 
                 if not self.queue.empty():
