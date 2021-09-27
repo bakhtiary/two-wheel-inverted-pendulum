@@ -7,6 +7,8 @@ name = "pypi"
 flask = "*"
 construct = "*"
 aiohttp = "*"
+numpy = "*"
+opencv-python = "*"
 
 [dev-packages]
 
