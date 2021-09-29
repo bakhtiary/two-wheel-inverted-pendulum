@@ -25,7 +25,6 @@ class Calibrator:
             calib_params = self.load_calibration_parameters(calib_dir)
             cameraEye.set_calibration_parameters(*calib_params)
 
-
     def start_calibration(self, calib_dir: Calib_Dir, cameraEye: CameraEye):
         i = 0
         start_time = time.time_ns()
@@ -36,9 +35,10 @@ class Calibrator:
             corners, ids, res3 = cv2.aruco.detectMarkers(frame, self.board.dictionary)
             frame_copy = frame.copy()
             try:
-                res2 = cv2.aruco.interpolateCornersCharuco(corners, ids, frame, self.board)
-                retval2, charucoCorners, charucoIds = res2
-                cv2.aruco.drawDetectedCornersCharuco(frame_copy, charucoCorners)
+                pass
+                # res2 = cv2.aruco.interpolateCornersCharuco(corners, ids, frame, self.board)
+                # retval2, charucoCorners, charucoIds = res2
+                # cv2.aruco.drawDetectedCornersCharuco(frame_copy, charucoCorners)
             except Exception as e:
                 traceback.print_exc()
 
@@ -52,7 +52,6 @@ class Calibrator:
                 the_char = chr(char_code)
                 if char_code == ord('q'):
                     break
-
                 elif char_code == ord('a'):
                     print("going to add this image")
                     try:
@@ -68,13 +67,11 @@ class Calibrator:
                     delta_time = (cur_time - start_time) / 1000_000_000
                     print(i, delta_time, i / (delta_time))
                     print(frame.shape)
-
                 elif char_code == ord('r'):
                     calib_params = self.compute_calibration_parameters(frame)
                     print(calib_params)
                     self.save_calibration_parameters(calib_dir,*calib_params)
                     cameraEye.set_calibration_parameters(*calib_params)
-
                 else:
                     print(f"key: {key} not understood")
 
@@ -118,13 +115,12 @@ class Calibrator:
 
 if __name__ == "__main__":
     from Calib_Dir import Calib_Dir
-    from Calibrator import Calibrator
     from CameraEye import CameraEye
 
     calib_board, _q = big_board_20x20()
 
     calibrator = Calibrator(calib_board)
-    eye = CameraEye.c29_webcam_eye()
+    eye = CameraEye.c29_webcam_linux_eye()
     eye.open_eyes()
     calibrator.calibrate(Calib_Dir("calib_dir/1/"), eye, True)
 

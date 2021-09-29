@@ -9,6 +9,9 @@ construct = "*"
 aiohttp = "*"
 numpy = "*"
 opencv-python = "*"
+moderngl = "*"
+moderngl-window = "*"
+opencv-contrib-python = "*"
 
 [dev-packages]
 
