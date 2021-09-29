@@ -35,10 +35,9 @@ class Calibrator:
             corners, ids, res3 = cv2.aruco.detectMarkers(frame, self.board.dictionary)
             frame_copy = frame.copy()
             try:
-                pass
-                # res2 = cv2.aruco.interpolateCornersCharuco(corners, ids, frame, self.board)
-                # retval2, charucoCorners, charucoIds = res2
-                # cv2.aruco.drawDetectedCornersCharuco(frame_copy, charucoCorners)
+                res2 = cv2.aruco.interpolateCornersCharuco(corners, ids, frame, self.board)
+                retval2, charucoCorners, charucoIds = res2
+                cv2.aruco.drawDetectedCornersCharuco(frame_copy, charucoCorners)
             except Exception as e:
                 traceback.print_exc()
 
