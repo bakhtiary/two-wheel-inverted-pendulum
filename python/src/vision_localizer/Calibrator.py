@@ -67,6 +67,7 @@ class Calibrator:
                     delta_time = (cur_time - start_time) / 1000_000_000
                     print(i, delta_time, i / (delta_time))
                     print(frame.shape)
+                    cameraEye.print_spec_values()
                 elif char_code == ord('r'):
                     calib_params = self.compute_calibration_parameters(frame)
                     print(calib_params)

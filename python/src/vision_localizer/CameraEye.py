@@ -55,3 +55,5 @@ class CameraEye:
             cur_value += (capability.increment * self.direction)
             self.vid.set(capability.id, cur_value)
             print(f"changed value of {capability.print_name} to {cur_value}")
+
+    def print_spec_values(self):
