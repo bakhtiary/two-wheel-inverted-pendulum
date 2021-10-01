@@ -1,13 +1,11 @@
 
 #include <Wire.h>
+#include "lib_motor_controller.h"
 
 uint32_t counter = 0;
 
-
-
 Motor motor1 = Motor(26,27,25,1,60);
 Motor motor2 = Motor(12,14,13,2,60);
-
 
 void setup()
 {
