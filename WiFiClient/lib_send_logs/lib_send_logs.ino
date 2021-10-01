@@ -1,19 +1,9 @@
-/*
- *  This sketch sends data via HTTP GET requests to data.sparkfun.com service.
- *
- *  You need to get streamId and privateKey at data.sparkfun.com and paste them
- *  below. Or just customize this script to talk to other HTTP servers.
- *
- */
-
 #include <WiFi.h>
 
 
 const char* ssid     = "MIWIFI_jTA4";
 const char* password = "m4eEUQGF";
 
-
-// Use WiFiClient class to create TCP connections
 #include "data_sender.h"
 
 void setup()
@@ -47,9 +37,8 @@ public:
   float y;
 };
 
-char* host = "192.168.1.134";
-int httpPort = 12345;
-DataSender <MydataStuff,ControlData> dataSender(host, httpPort);
+HostAndPort host_and_port("192.168.1.134",12345);
+DataSender <MydataStuff,ControlData> dataSender(&host_and_port);
 
 void loop()
 {
