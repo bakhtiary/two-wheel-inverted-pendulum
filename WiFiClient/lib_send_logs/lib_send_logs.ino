@@ -37,8 +37,7 @@ public:
   float y;
 };
 
-HostAndPort host_and_port("192.168.1.134",12345);
-DataSender <MydataStuff,ControlData> dataSender(&host_and_port);
+DataSender <MydataStuff,ControlData> dataSender("192.168.1.134", 12345);
 
 void loop()
 {
