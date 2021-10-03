@@ -8,11 +8,18 @@ class DataSender{
   int value;
   String host;
   int port;
+  bool first_connection_succeeded;
 
   DataSender(const char * _host,const int _port){
     value = 0;
     host = _host;
     port = _port;
+    client.connect(host.c_str(), port);
+    if (client.connected()){
+      first_connection_succeeded = true;
+    }else{
+      first_connection_succeeded = false;
+    }
   }
 
   void send_data(SEND_TYPE data_to_send){
