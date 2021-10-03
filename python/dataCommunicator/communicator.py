@@ -13,12 +13,20 @@ class Communicator():
                 pattern = 'struct\s+(\w+)\s*:\s*CommunicationData\s*{'
                 match = re.search(pattern, line)
                 if(match):
-                    print("found: "+match.group(1))
                     data_objects.append(match.group(1))
                 else:
                     print("Nothing found on: "+line)
 
         for line in lines:
+            for name in data_objects:
+                if re.search(f"{name}.*\(.*\)", line):
+                    signature = line[line.find('(')+1:line.find(')')]
+                    print(signature)
+                    for part in signature.split(","):
+                        print(part)
+
+
+
 
 
 
