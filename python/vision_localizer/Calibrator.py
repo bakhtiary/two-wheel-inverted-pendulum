@@ -51,6 +51,9 @@ class Calibrator:
                 the_char = chr(char_code)
                 if char_code == ord('q'):
                     break
+                if char_code == ord('2'):
+                    cv2.waitKey(0)
+
                 elif char_code == ord('a'):
                     print("going to add this image")
                     try:

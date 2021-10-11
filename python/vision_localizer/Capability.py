@@ -57,10 +57,10 @@ class C299_linux_Spec_Factory(VideoSource):
 
     def get_cap_specs(self):
         return [
-            CapSpecs("CAP_PROP_FRAME_WIDTH", 1920),
-            CapSpecs("CAP_PROP_FRAME_HEIGHT", 1080),
+            CapSpecs("CAP_PROP_FRAME_WIDTH", 320),
+            CapSpecs("CAP_PROP_FRAME_HEIGHT", 240),
             CapSpecs("CAP_PROP_AUTO_EXPOSURE", 0, 1),
-            CapSpecs("CAP_PROP_EXPOSURE", -120, 5, 'e', 0),
+            CapSpecs("CAP_PROP_EXPOSURE", 0, 5, 'e', 0),
             CapSpecs("CAP_PROP_AUTOFOCUS", 0.0),
             CapSpecs("CAP_PROP_FOCUS", 0, 5, 'f', 0),
             CapSpecs("CAP_PROP_WHITE_BALANCE_BLUE_U", 0.0, 100, 'b'),
@@ -68,8 +68,8 @@ class C299_linux_Spec_Factory(VideoSource):
             CapSpecs("CAP_PROP_CONTRAST", 0, 8, 'c', 0),
             CapSpecs("CAP_PROP_BRIGHTNESS", 128, 8, 'b', 0),
             CapSpecs("CAP_PROP_SHARPNESS", 128, 8, 's', 0),
-            CapSpecs("CAP_PROP_GAIN", 255),
-            CapSpecs("CAP_PROP_PAN", 10, 1, 'p'),
+            CapSpecs("CAP_PROP_GAIN", 128, 1, 'g', 0, 255),
+            CapSpecs("CAP_PROP_PAN", 10, 1000, 'p'),
         ]
 
 
@@ -83,8 +83,8 @@ class C299_win_Spec_Factory(VideoSource):
 
     def get_cap_specs(self):
         return [
-            CapSpecs("CAP_PROP_FRAME_WIDTH", 1920),
-            CapSpecs("CAP_PROP_FRAME_HEIGHT", 1080),
+            CapSpecs("CAP_PROP_FRAME_WIDTH", 320),
+            CapSpecs("CAP_PROP_FRAME_HEIGHT", 240),
             CapSpecs("CAP_PROP_AUTO_EXPOSURE", 0, 1),
             CapSpecs("CAP_PROP_EXPOSURE", -11.0, 5, 'e'),
             CapSpecs("CAP_PROP_AUTOFOCUS", 0.0),
@@ -95,7 +95,7 @@ class C299_win_Spec_Factory(VideoSource):
             CapSpecs("CAP_PROP_BRIGHTNESS", 128, 8, 'b'),
             CapSpecs("CAP_PROP_SHARPNESS", 128, 8, 's'),
             CapSpecs("CAP_PROP_GAIN", 255),
-            CapSpecs("CAP_PROP_PAN", 10, 1, 'p'),
+            CapSpecs("CAP_PROP_PAN", 20, 1000, 'p'),
         ]
 
 
