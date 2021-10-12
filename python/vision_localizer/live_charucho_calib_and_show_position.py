@@ -29,7 +29,7 @@ class Board_Location_Finder:
         while True:
 
             retval, image = self.cameraEye.get_next_image()
-            cv2.imshow("image", image)
+            cv2.imshow("frame", image)
             cv2.pollKey()
 
             markerCorners, markerIds, rejected = cv2.aruco.detectMarkers(image, board.dictionary)
@@ -53,10 +53,10 @@ class Board_Location_Viewer:
         self.job = None
 
     def start(self):
-        self.job = mp.Process(target=Board_Location_Viewer.run, args=(self,))
+        self.job = mp.Process(target=Board_Location_Viewer._run, args=(self,))
         self.job.start()
 
-    def run(self):
+    def _run(self):
         runBoardLocationViewer(self.location_pipe)
 
     def wait_till_finish(self):
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     calibrator = Calibrator(calib_board)
 
-    eye = CameraEye.c29_webcam_eye()
+    eye = CameraEye.c29_webcam_linux_eye()
     eye.open_eyes()
     calibrator.calibrate(Calib_Dir("calib_dir/1/"), eye)
     eye.close_eyes()

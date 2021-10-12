@@ -21,7 +21,6 @@ class CapSpecs:
             print(f"{m} is lower than minval for {self.name} so resetting it")
             m = self.min_val
         elif self.max_val is not None and m > self.max_val:
-            print(f"{m} is higher than minval for {self.name} so resetting it")
             m = self.max_val
         return m
 
@@ -57,9 +56,9 @@ class C299_linux_Spec_Factory(VideoSource):
 
     def get_cap_specs(self):
         return [
-            CapSpecs("CAP_PROP_FRAME_WIDTH", 320),
-            CapSpecs("CAP_PROP_FRAME_HEIGHT", 240),
-            CapSpecs("CAP_PROP_AUTO_EXPOSURE", 0, 1),
+            CapSpecs("CAP_PROP_FRAME_WIDTH", 800),
+            CapSpecs("CAP_PROP_FRAME_HEIGHT", 600),
+            CapSpecs("CAP_PROP_AUTO_EXPOSURE", 0, 1, ';'),
             CapSpecs("CAP_PROP_EXPOSURE", 0, 5, 'e', 0),
             CapSpecs("CAP_PROP_AUTOFOCUS", 0.0),
             CapSpecs("CAP_PROP_FOCUS", 0, 5, 'f', 0),
@@ -69,7 +68,7 @@ class C299_linux_Spec_Factory(VideoSource):
             CapSpecs("CAP_PROP_BRIGHTNESS", 128, 8, 'b', 0),
             CapSpecs("CAP_PROP_SHARPNESS", 128, 8, 's', 0),
             CapSpecs("CAP_PROP_GAIN", 128, 1, 'g', 0, 255),
-            CapSpecs("CAP_PROP_PAN", 10, 1000, 'p'),
+            CapSpecs("CAP_PROP_PAN", 36000, 1000, 'p'),
         ]
 
 

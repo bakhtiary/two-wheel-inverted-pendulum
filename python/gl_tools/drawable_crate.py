@@ -9,12 +9,12 @@ import moderngl_window as mglw
 class Crate_mesh():
 
     def __init__(self, windowConfig):
-        self.prog = windowConfig.load_program("src/gl_tools/textured_mesh.glsl")
-        scene = windowConfig.load_scene('src/gl_tools/crate.obj')
+        self.prog = windowConfig.load_program("gl_tools/textured_mesh.glsl")
+        scene = windowConfig.load_scene('gl_tools/crate.obj')
         self.vao = scene.root_nodes[0].mesh.vao.instance(self.prog)
         self.mvp = self.prog['Mvp']
         self.light = self.prog['Light']
-        self.texture = windowConfig.load_texture_2d('src/gl_tools/crate.png')
+        self.texture = windowConfig.load_texture_2d('gl_tools/crate.png')
 
 
     def render(self, projection_matrix):

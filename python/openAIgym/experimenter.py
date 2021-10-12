@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 import numpy as np, scipy.stats as st
 
-# def get_test_results_for_seed():
+
 class ExperimenterRunner:
     def __init__(self, regressor, de):
         self.regressor = regressor
