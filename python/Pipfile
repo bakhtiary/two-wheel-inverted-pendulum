@@ -12,6 +12,7 @@ opencv-python = "*"
 moderngl = "*"
 moderngl-window = "*"
 opencv-contrib-python = "*"
+pywavefront = "*"
 
 [dev-packages]
 

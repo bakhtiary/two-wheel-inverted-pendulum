@@ -58,7 +58,7 @@ class C299_linux_Spec_Factory(VideoSource):
         return [
             CapSpecs("CAP_PROP_FRAME_WIDTH", 800),
             CapSpecs("CAP_PROP_FRAME_HEIGHT", 600),
-            CapSpecs("CAP_PROP_AUTO_EXPOSURE", 0, 1, ';'),
+            CapSpecs("CAP_PROP_AUTO_EXPOSURE", 0.0, 1, ';'),
             CapSpecs("CAP_PROP_EXPOSURE", 0, 5, 'e', 0),
             CapSpecs("CAP_PROP_AUTOFOCUS", 0.0),
             CapSpecs("CAP_PROP_FOCUS", 0, 5, 'f', 0),

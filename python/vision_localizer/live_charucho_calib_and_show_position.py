@@ -34,16 +34,17 @@ class Board_Location_Finder:
 
             markerCorners, markerIds, rejected = cv2.aruco.detectMarkers(image, board.dictionary)
 
-            try:
-                retval, charucoCorners, charucoIds = cv2.aruco.interpolateCornersCharuco(markerCorners, markerIds, image, board)
+            if len(markerCorners) > 4:
+                try:
+                    retval, charucoCorners, charucoIds = cv2.aruco.interpolateCornersCharuco(markerCorners, markerIds, image, board)
+                    rvec = np.zeros((3))
+                    tvec = np.zeros((3))
+                    success = cv2.aruco.estimatePoseCharucoBoard(np.array(charucoCorners), np.array(charucoIds), board, self.cameraEye.calibration_matrix, self.cameraEye.dist_coef, rvec, tvec)
+                    if success:
+                        self.location_pipe.put((rvec, tvec))
+                except:
+                    traceback.print_stack()
 
-                rvec = np.zeros((3))
-                tvec = np.zeros((3))
-                success = cv2.aruco.estimatePoseCharucoBoard(np.array(charucoCorners), np.array(charucoIds), board, self.cameraEye.calibration_matrix, self.cameraEye.dist_coef, rvec, tvec)
-                if success:
-                    self.location_pipe.put((rvec, tvec))
-            except:
-                traceback.print_stack()
 
 
 
@@ -64,7 +65,7 @@ class Board_Location_Viewer:
 
 
 if __name__ == "__main__":
-    calib_board,_ = big_board_20x20()
+    calib_board, _ = big_board_20x20()
 
     calibrator = Calibrator(calib_board)
 
