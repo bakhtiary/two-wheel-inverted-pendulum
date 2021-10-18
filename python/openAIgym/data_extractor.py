@@ -1,6 +1,11 @@
+from dataclasses import dataclass
 
 import numpy as np
 from random import Random
+
+from gym.spaces import Discrete
+from keras.utils.np_utils import to_categorical
+
 
 class CachingExtractorDecorator:
     def __init__(self, de):
@@ -14,6 +19,18 @@ class CachingExtractorDecorator:
             data = self.de.get_data(seed, n)
             self.cache[key] = data
             return data
+
+@dataclass
+class DataSet:
+    x: np.array
+    y: np.array
+
+    def sub_target_dataset(self, idx: int):
+        return DataSet(self.x, self.y[:,idx])
+
+    def sub_input_dataset(self, idx):
+        return DataSet(self.x[:, idx], self.y)
+
 
 class DataExtractor:
     def __init__(self, env, get_real_obs_func, agent):
@@ -32,7 +49,8 @@ class DataExtractor:
         all_dones = []
         all_info = []
         all_actions = []
-        for i in range(30):
+        dones = False
+        while not dones:
             action = self.agent.get_action()
             all_obs.append(obs)
             all_actions.append([action])
@@ -42,9 +60,12 @@ class DataExtractor:
             all_dones.append(dones)
             all_info.append(info)
 
-            if dones:
-                break
-        inputs = np.concatenate([all_obs, all_actions], axis=1)[1:]
+        assert isinstance(self.env.action_space, Discrete)
+        action_dimentions = self.env.action_space.n
+        all_actions_one_hot = to_categorical(all_actions, num_classes=action_dimentions)
+
+        inputs = np.concatenate([all_obs, all_actions_one_hot], axis=1)[:-1]
+
         outputs_diffs = np.diff(all_obs, axis=0)
         return inputs, outputs_diffs, all_rewards[1:]
 
@@ -57,8 +78,8 @@ class DataExtractor:
             all_inputs.append(inputs)
             all_outputs.append(outputs[:])
 
-        data = np.concatenate(all_inputs), np.concatenate(all_outputs)
-        return data
+
+        return DataSet(np.concatenate(all_inputs), np.concatenate(all_outputs))
 
 def get_real_obs_for_luner_lander(env):
     pos = env.lander.position
