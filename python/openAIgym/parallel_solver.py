@@ -4,8 +4,7 @@ import gym
 import numpy as np
 from scipy.stats import ttest_rel
 
-from openAIgym.dqn_solver import load_solver_state, DQNSolver, single_train_run_and_log, save_solver_state
-from openAIgym.dqn_training import single_training_run
+from openAIgym.dqn_solver import load_solver_state, DQNSolver, save_solver_state
 from openAIgym.score import ScoreLogger
 
 def main():

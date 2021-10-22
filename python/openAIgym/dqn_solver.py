@@ -9,7 +9,6 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizer_v2.adam import Adam
 
-from openAIgym.dqn_training import single_training_run
 from openAIgym.score import ScoreLogger
 
 ENV_NAME = "CartPole-v1"
@@ -123,11 +122,6 @@ def model_filename(file_path, i):
 
 def dqn_filename(file_path, i):
     return f"{file_path}/training_step_{i}.dqn_solver"
-
-
-def single_train_run_and_log(run_func, dqn_solver, env, score_logger, run):
-    score = run_func(dqn_solver, env)
-    score_logger.add_score(score, run)
 
 
 if __name__ == "__main__":
