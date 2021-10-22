@@ -99,7 +99,7 @@ def main(_):
   xs = np.zeros([num_examples, input_dims])
   ys = np.zeros([num_examples, output_dims])
   dataset = tf.data.Dataset.from_tensor_slices(
-      (xs, ys)).repeat(num_examples).batch(int(num_examples / steps_per_epoch))
+      (xs, ys)).repeat(num_examples).batch_size(int(num_examples / steps_per_epoch))
 
   sess = tf.Session()
   if FLAGS.debug:

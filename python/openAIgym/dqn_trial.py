@@ -5,7 +5,7 @@ import gym
 import numpy as np
 from scipy.stats import ttest_rel
 
-from openAIgym.dqn_solver import load_solver_state, DQNSolver
+from openAIgym.dqn_solver import load_solver_state
 
 
 def run_one_trial(env, solver, seed):
@@ -29,6 +29,7 @@ def run_one_trial(env, solver, seed):
 
     solver.exploration_rate = original_exploration_rate
     return step
+
 
 def main():
     solver = load_solver_state("original_training", 220)

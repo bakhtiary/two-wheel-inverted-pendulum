@@ -7,9 +7,7 @@ import os
 import csv
 import numpy as np
 
-SCORES_CSV_PATH = "./scores/scores2.csv"
 SCORES_PNG_PATH = "./scores/scores2.png"
-SOLVED_CSV_PATH = "./scores/solved2.csv"
 SOLVED_PNG_PATH = "./scores/solved2.png"
 AVERAGE_SCORE_TO_SOLVE = 195
 CONSECUTIVE_RUNS_TO_SOLVE = 100
@@ -17,19 +15,22 @@ CONSECUTIVE_RUNS_TO_SOLVE = 100
 
 class ScoreLogger:
 
-    def __init__(self, env_name):
+    def __init__(self, env_name, file_name):
         self.scores = deque(maxlen=CONSECUTIVE_RUNS_TO_SOLVE)
         self.env_name = env_name
 
-        if os.path.exists(SCORES_PNG_PATH):
-            os.remove(SCORES_PNG_PATH)
-        if os.path.exists(SCORES_CSV_PATH):
-            os.remove(SCORES_CSV_PATH)
+        self.solved_csv_path = f"./scores/{file_name}_solved.csv"
+        self.png_path = f"./scores/{file_name}_scores.png"
+        self.scores_csv_path = f"./scores/{file_name}_scores.csv"
+        if os.path.exists(self.png_path):
+            os.remove(self.png_path)
+        if os.path.exists(self.scores_csv_path):
+            os.remove(self.scores_csv_path)
 
     def add_score(self, score, run):
-        self._save_csv(SCORES_CSV_PATH, score)
-        self._save_png(input_path=SCORES_CSV_PATH,
-                       output_path=SCORES_PNG_PATH,
+        self._save_csv(self.scores_csv_path, score)
+        self._save_png(input_path=self.scores_csv_path,
+                       output_path=self.png_path,
                        x_label="runs",
                        y_label="scores",
                        average_of_n_last=CONSECUTIVE_RUNS_TO_SOLVE,
@@ -42,8 +43,8 @@ class ScoreLogger:
         if mean_score >= AVERAGE_SCORE_TO_SOLVE and len(self.scores) >= CONSECUTIVE_RUNS_TO_SOLVE:
             solve_score = run-CONSECUTIVE_RUNS_TO_SOLVE
             print("Solved in " + str(solve_score) + " runs, " + str(run) + " total runs.")
-            self._save_csv(SOLVED_CSV_PATH, solve_score)
-            self._save_png(input_path=SOLVED_CSV_PATH,
+            self._save_csv(self.solved_csv_path, solve_score)
+            self._save_png(input_path=self.solved_csv_path,
                            output_path=SOLVED_PNG_PATH,
                            x_label="trials",
                            y_label="steps before solve",
