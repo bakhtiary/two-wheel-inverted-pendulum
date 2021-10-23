@@ -16,7 +16,7 @@ ENV_NAME = "CartPole-v1"
 
 class DQNSolver:
 
-    def __init__(self, env):
+    def __init__(self, env_spaces):
 
         self.GAMMA = 0.95
         self.LEARNING_RATE = 0.001
@@ -31,8 +31,8 @@ class DQNSolver:
         self.rand = random.Random(12345)
         self.exploration_rate = self.EXPLORATION_MAX
 
-        self.observation_space = env.observation_space.shape[0]
-        self.action_space = env.action_space.n
+        self.observation_space = env_spaces.observation_space
+        self.action_space = env_spaces.action_space
 
         self.memory = deque(maxlen=self.MEMORY_SIZE)
 
@@ -47,8 +47,8 @@ class DQNSolver:
     def seed(self, seed):
         self.rand = random.Random(seed)
 
-    def remember(self, state, action, reward, next_state, done):
-        self.memory.append((state, action, reward, next_state, done))
+    def remember(self, memory_instance):
+        self.memory.append(memory_instance)
 
     def act(self, state):
         if self.rand.uniform(0,1) < self.exploration_rate:

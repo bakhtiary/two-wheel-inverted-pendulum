@@ -2,9 +2,9 @@ import random
 
 import gym
 import numpy as np
-from scipy.stats import ttest_rel
 
-from openAIgym.dqn_solver import load_solver_state, DQNSolver, save_solver_state
+from openAIgym.dqn_solver import DQNSolver, save_solver_state
+from openAIgym.dqn_training import PerActionTrainer
 from openAIgym.score import ScoreLogger
 
 def main():
@@ -12,10 +12,11 @@ def main():
     current_step = 0
     env = gym.make("CartPole-v1")
     solver = DQNSolverParallel(env)
+    trainer = PerActionTrainer()
 
     for i in range(current_step, current_step + 100):
-        single_train_run_and_log(single_training_run, solver, env, score_logger, i)
-        print("saving")
+        score = trainer.train(solver, env)
+        score_logger.add_score(score, i)
         save_solver_state(solver, "new_training", i)
 
 
