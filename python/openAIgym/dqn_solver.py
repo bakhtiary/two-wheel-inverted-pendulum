@@ -102,7 +102,7 @@ def main():
         save_solver_state(dqn_solver, "new_training", i)
 
 
-def load_solver_state(training_name: str, current_step: int):
+def load_solver_state(training_name: str, current_step: int)->DQNSolver:
     dqn_solver = pickle.load(open(dqn_filename(training_name, current_step), "rb"))
     dqn_solver.model = keras.models.load_model(model_filename(training_name, current_step))
     return dqn_solver

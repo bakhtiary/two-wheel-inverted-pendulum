@@ -35,7 +35,9 @@ class PerEpisodeTrainer:
             dqn_solver.remember(memory_instance)
         dqn_solver.experience_replay(steps)
 
-        return steps
+        score = sum([i[2] for i in memory_instances])
+        print(score)
+        return score
 
 
 def single_train_run_and_log(run_func, dqn_solver, env, score_logger, run):
