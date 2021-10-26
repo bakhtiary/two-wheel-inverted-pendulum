@@ -12,11 +12,10 @@ while True:
     model.learn(total_timesteps=1000)
 
     for i in range(1000):
-
         action, _states = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
         env.render()
         if done:
-          obs = env.reset()
+            break
 
 env.close()
