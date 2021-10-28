@@ -14,8 +14,10 @@ class TwoWheelRobot(mujoco_env.MujocoEnv, utils.EzPickle):
         quaternion = self.data.get_body_xquat("buddy")
         up_vec = quat_rot_vec(quaternion, (1, 0, 0))
         lean_up = up_vec[2]
-        reward = lean_up
-        done = lean_up < 0.5
+        done = lean_up < 0.6
+        done_reward = -100 if done else -1
+        action_reward = -np.sum(np.abs(a))
+        reward = done_reward + action_reward
         ob = self._get_obs()
         return (
             ob,
@@ -36,9 +38,9 @@ class TwoWheelRobot(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def reset_model(self):
         qpos = self.init_qpos + self.np_random.uniform(
-            size=self.model.nq, low=-0.1, high=0.1
+            size=self.model.nq, low=-0.01, high=0.01
         )
-        qvel = self.init_qvel + self.np_random.randn(self.model.nv) * 0.1
+        qvel = self.init_qvel + self.np_random.randn(self.model.nv) * 0.01
         self.set_state(qpos, qvel)
         return self._get_obs()
 

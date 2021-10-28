@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from stable_baselines3 import PPO
+
 import numpy as np
 from random import Random
 
