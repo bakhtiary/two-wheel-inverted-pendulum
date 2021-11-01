@@ -1,8 +1,8 @@
+import gym
 from stable_baselines3 import PPO
 
-from openAIgym.two_wheel_robot import TwoWheelRobot
 
-env = TwoWheelRobot()
+env = gym.make("Ant-v2")
 
 model = PPO("MlpPolicy", env, verbose=1)
 

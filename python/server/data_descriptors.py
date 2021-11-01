@@ -63,7 +63,8 @@ def read_structs(descriptor_lines):
             if (match):
                 data_objects.append(match.group(1))
             else:
-                print("Nothing found on: " + line)
+                #print("Nothing found on: " + line)
+                pass
 
     id_maps_to_structs_container_name_tupple = {}
     for line in lines:
