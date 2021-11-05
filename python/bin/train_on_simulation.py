@@ -1,55 +1,86 @@
+import tensorflow as tf
 
 import numpy as np
+import gym
 
-from stable_baselines3 import DDPG
-from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
+import ddpgtf.ddpgtf2WithDataGetter as ddpg
 from rl_training.two_wheel_robot import TwoWheelRobot
 
-env = TwoWheelRobot()
-
-
-class RealityMocker:
-    def __init__(self, env, number_of_steps):
+class DataGetter:
+    def __init__(self, env, max_number_of_steps, actor_noise, render):
         self.env = env
-        self.number_of_steps = number_of_steps
+        self.max_number_of_steps = max_number_of_steps
+        self.actor_noise = actor_noise
+        self.render = render
 
     def run_trial(self, policy):
         last_run_result = []
         obs = self.env.reset()
-        last_run_result.append(obs)
-        for i in range(self.number_of_steps):
-            action = policy.act(obs)
-            result = self.env.step(action)
-            last_run_result.append((action, result))
+        for i in range(self.max_number_of_steps):
+            self.env.render()
+            a = policy.predict(np.reshape(obs, (1, policy.s_dim))) + self.actor_noise()
+            obs2, r, done, info = self.env.step(a[0])
+            last_run_result.append((obs, a, obs2, r, done, info))
+            obs = obs2
+            if done:
+                break
 
         return last_run_result
 
-reality_mocker = RealityMocker(env, 100)
 
-class RealityWrapper:
-    def __init__(self, reality_world):
-        self.reality_world = reality_world
-        self.step = None
+class OnestepDataGetter:
+    def __init__(self, env, max_number_of_steps, actor_noise, render):
+        self.env = env
+        self.max_number_of_steps = max_number_of_steps
+        self.actor_noise = actor_noise
+        self.render = render
 
-    def reset(self):
-        self.step = 0
-        self.trial_results = self.reality_world.run_trial()
-        return self.trial_results[0]
+    def run_trial(self, policy):
+        last_run_result = []
+        obs = self.env.reset()
+        for i in range(self.max_number_of_steps):
+            self.env.render()
+            a = policy.predict(np.reshape(obs, (1, policy.s_dim))) + self.actor_noise()
+            obs2, r, done, info = self.env.step(a[0])
+            last_run_result.append((obs, a, obs2, r, done, info))
+            obs = obs2
 
-    def step(self, action):
-        self.step += 1
-        if self.step >= len(self.trial_results):
-            raise 'your asking for more than we have'
-        return self.trial_results[self.step][1]
 
 
-reality_to_simulation = RealityWrapper(reality_mocker)
+def main():
+    with tf.compat.v1.Session() as sess:
 
-# The noise objects for DDPG
-n_actions = env.action_space.shape[-1]
-action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1 * np.ones(n_actions))
+        # env = TwoWheelRobot()
+        env = gym.envs.make("Pendulum-v0")
 
-model = DDPG("MlpPolicy", env, action_noise=action_noise, verbose=1,)
+        seed = 1234
+        np.random.seed(seed)
+        tf.compat.v1.set_random_seed(seed)
+        env.seed(seed)
 
-model.learn(total_timesteps=100000, log_interval=10)
+        tau = 0.001
+        minibatch_size = 64
+        actor_lr = 0.0001
+        critic_lr = 0.001
+        gamma = 0.99
+        summary_dir = './results/tf_ddpg'
+        max_trials = 1000
+        buffer_size = 1000000
 
+        actor = ddpg.ActorNetwork(sess, env,
+                             actor_lr, tau,
+                             minibatch_size)
+
+        critic = ddpg.CriticNetwork(sess, actor,
+                               critic_lr, tau,
+                               gamma,
+                               )
+
+        actor_noise = ddpg.OrnsteinUhlenbeckActionNoise(mu=np.zeros(actor.a_dim))
+        data_getter = OnestepDataGetter(env, 100, actor_noise, True)
+
+        ddpg.train(sess, data_getter, actor, critic, summary_dir, buffer_size, seed, minibatch_size, max_trials)
+
+
+if __name__ == "__main__":
+    main()
