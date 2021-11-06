@@ -274,7 +274,7 @@ def train(sess, real_env, actor, critic, summary_dir, buffer_size, seed, minibat
     # This hurts the performance on Pendulum but could be useful
     # in other environments.
     # tflearn.is_training(True)
-
+    learning_steps = 0
     for j in range(max_trials):
 
         # Added exploration noise
@@ -287,12 +287,13 @@ def train(sess, real_env, actor, critic, summary_dir, buffer_size, seed, minibat
 
         for s, a, s2, r, terminal, info in trial_result:
             replay_buffer.add(np.reshape(s, (actor.s_dim,)), np.reshape(a, (actor.a_dim,)), r,
-                                  terminal, np.reshape(s2, (actor.s_dim,)))
+                              terminal, np.reshape(s2, (actor.s_dim,)))
             ep_reward *= 0.99
             ep_reward += r*0.01
 
-        for _ in trial_result:
-            if replay_buffer.size() > minibatch_size:
+        if replay_buffer.size() > minibatch_size:
+            for _ in trial_result:
+                learning_steps += 1
                 s_batch, a_batch, r_batch, t_batch, s2_batch = \
                     replay_buffer.sample_batch(minibatch_size)
 
@@ -331,5 +332,5 @@ def train(sess, real_env, actor, critic, summary_dir, buffer_size, seed, minibat
             # writer.add_summary(summary_str, j)
             # writer.flush()
             #
-        print(f'| Reward: {ep_reward:.2f} | Episode: {j} | Qmax: {ep_ave_max_q:.4f}')
+        print(f'| Reward: {ep_reward:.2f} | Episode: {j} | Steps: {learning_steps}| Qmax: {ep_ave_max_q:.4f}')
 

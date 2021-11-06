@@ -12,7 +12,6 @@ Author: Patrick Emami
 import tensorflow as tf
 import numpy as np
 import gym
-from gym import wrappers
 import tflearn
 import argparse
 import pprint as pp
