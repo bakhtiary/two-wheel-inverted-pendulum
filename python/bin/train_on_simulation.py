@@ -28,23 +28,32 @@ class DataGetter:
         return last_run_result
 
 
-class OnestepDataGetter:
-    def __init__(self, env, max_number_of_steps, actor_noise, render):
+class ConstStepDataGetter:
+    def __init__(self, env, actor_noise, render, num_steps_per_run):
         self.env = env
-        self.max_number_of_steps = max_number_of_steps
         self.actor_noise = actor_noise
         self.render = render
+        self.previous_obs = None
+        self.reset = True
+        self.num_steps_per_run = num_steps_per_run
 
     def run_trial(self, policy):
-        last_run_result = []
-        obs = self.env.reset()
-        for i in range(self.max_number_of_steps):
-            self.env.render()
-            a = policy.predict(np.reshape(obs, (1, policy.s_dim))) + self.actor_noise()
-            obs2, r, done, info = self.env.step(a[0])
-            last_run_result.append((obs, a, obs2, r, done, info))
-            obs = obs2
+        trails = []
+        for i in range(self.num_steps_per_run):
+            trails.append(self.take_one_step(policy)[0])
+        return trails
 
+    def take_one_step(self, policy):
+        last_run_result = []
+        if self.reset:
+            self.previous_obs = self.env.reset()
+        self.env.render()
+        a = policy.predict(np.reshape(self.previous_obs, (1, policy.s_dim))) + self.actor_noise()
+        obs2, r, done, info = self.env.step(a[0])
+        last_run_result.append((self.previous_obs, a, obs2, r, done, info))
+        self.previous_obs = obs2
+        self.reset = done
+        return last_run_result
 
 
 def main():
@@ -64,7 +73,7 @@ def main():
         critic_lr = 0.001
         gamma = 0.99
         summary_dir = './results/tf_ddpg'
-        max_trials = 1000
+        max_trials = 10000000
         buffer_size = 1000000
 
         actor = ddpg.ActorNetwork(sess, env,
@@ -77,7 +86,7 @@ def main():
                                )
 
         actor_noise = ddpg.OrnsteinUhlenbeckActionNoise(mu=np.zeros(actor.a_dim))
-        data_getter = OnestepDataGetter(env, 100, actor_noise, True)
+        data_getter = ConstStepDataGetter(env, actor_noise, True, 2)
 
         ddpg.train(sess, data_getter, actor, critic, summary_dir, buffer_size, seed, minibatch_size, max_trials)
 

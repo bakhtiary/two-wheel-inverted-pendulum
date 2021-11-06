@@ -346,7 +346,6 @@ def train(sess, env, args, actor, critic, actor_noise):
 
 def main(args):
     with tf.compat.v1.Session() as sess:
-
         env = gym.make(args['env'])
         np.random.seed(int(args['random_seed']))
         tf.compat.v1.set_random_seed(int(args['random_seed']))
