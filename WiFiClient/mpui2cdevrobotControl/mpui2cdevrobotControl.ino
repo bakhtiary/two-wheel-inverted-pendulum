@@ -63,6 +63,7 @@ const char* ssid     = "MIWIFI_jTA4";
 const char* password = "m4eEUQGF";
 
 void setup() {
+    Serial.begin(115200);
 
     Serial.println(String("connecting to wifi: ")+ssid);
     WiFi.begin(ssid, password);
@@ -82,7 +83,6 @@ void setup() {
     // initialize serial communication
     // (115200 chosen because it is required for Teapot Demo output, but it's
     // really up to you depending on your project)
-    Serial.begin(115200);
     while (!Serial); // wait for Leonardo enumeration, others continue immediately
 
     // initialize device
