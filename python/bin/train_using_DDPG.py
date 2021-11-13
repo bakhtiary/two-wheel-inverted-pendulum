@@ -1,7 +1,4 @@
 from stable_baselines3 import DDPG
-import torch.onnx
-
-torch.onnx.export()
 
 from rl_training.two_wheel_robot import TwoWheelRobot
 
