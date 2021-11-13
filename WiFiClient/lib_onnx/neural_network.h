@@ -69,6 +69,12 @@ class Tanh: public Stage{
   public:
   Tanh(int output_size):Stage(output_size){}
   TransferValues * compute(TransferValues * input){
+    for (int i = 0; i < input->len; i++){
+      float cur_val = input->values[i];
+      float pos_exp = exp(cur_val);
+      float neg_exp = exp(-cur_val);
+      output->values[i] = (pos_exp - neg_exp)/(pos_exp + neg_exp);
+    }
     return output;
   }
 };

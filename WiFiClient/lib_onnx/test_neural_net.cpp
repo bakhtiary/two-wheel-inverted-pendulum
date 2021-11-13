@@ -1,3 +1,4 @@
+#include "math.h"
 #include "neural_network.h"
 
 #include <iostream>
@@ -49,11 +50,9 @@ void test_tanh(){
   Tanh tanh(3);
   TransferValues * result = tanh.compute(&input);
 
-  print_value(result);
   float t[]{-0.7616,  0.9951,  0.9993};
   assert(result->nearly_equals(t));
-  
-  cout << "relu works" << endl;
+  cout << "tanh works" << endl;
 
 }
   
