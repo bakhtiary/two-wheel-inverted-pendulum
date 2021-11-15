@@ -32,6 +32,7 @@ void setup() {
     data1 = new Data1();
     data2 = new Data2();
     first_connection_succeeded = communication_channel.init();
+    Serial.println(first_connection_succeeded);
 
     communication_channel.register_data(data1, sizeof(Data1));
     communication_channel.register_data(data2, sizeof(Data2));

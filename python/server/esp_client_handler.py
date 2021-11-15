@@ -1,3 +1,4 @@
+import asyncio
 from asyncio import StreamReader, StreamWriter
 
 from construct import Int32ul
@@ -19,7 +20,7 @@ class Client_Handler:
             count = 0
             while True:
                 count += 1
-                incoming_data = await reader.read(4086)
+                incoming_data = asyncio.wait_for(reader.read(4086), )
                 request = dd.parse_incoming_data(incoming_data)
                 for r in request:
                     output.write(f"{r}\n")

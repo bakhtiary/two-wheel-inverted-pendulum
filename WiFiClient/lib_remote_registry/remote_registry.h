@@ -41,15 +41,18 @@ class CommunicationChannel{
     if (cd->id > MAX_REGISTRY_SIZE){
       Serial.println("error cd->id > MAX_REGISTRY_SIZE");
     }
-    if (communicationSizes[cd->id] == 0){
-      Serial.println("error communicationSizes[cd->id] == 0");
+    if (communicationSizes[cd->id] != 0){ // already set
+      Serial.println("error communicationSizes[cd->id] != 0");
     }
 
     communicationDatas[cd->id] = cd;
     communicationSizes[cd->id] = cd_size;
   }
   CommunicationData * update_registers(){
+    Serial.println("checking registers");
+
     if(client.available()){
+      Serial.println("data is here");
       int id;
       client.readBytes((char*) &id,sizeof(int));
       

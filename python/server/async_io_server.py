@@ -11,6 +11,7 @@ HOST = '0.0.0.0'  # Standard loopback interface address (localhost)
 PORT = 12345  # Port to listen on (non-privileged po rts are > 1023)
 
 filename = f"{os.getenv('REPOSITORY_ROOT')}/WiFiClient/lib_remote_registry/remote_registry_data.h"
+# filename = f"{os.getenv('REPOSITORY_ROOT')}/WiFiClient/lib_remote_model_loader/neural_comm_data.h"
 
 ddf = DataDescriptorsFactory(filename)
 

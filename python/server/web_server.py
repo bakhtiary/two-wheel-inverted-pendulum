@@ -66,6 +66,7 @@ def run_ui_web_server(q, data_descriptors_factory: DataDescriptorsFactory):
             for name in control_data:
                 data_dict[name] = data_type_converters[name](data[name])
             data_in_container = Container(data_dict)
+            print(data_in_container)
             q.put(data_in_container)
 
             return web.Response(body=get_form(self.data_descriptors.id_maps_to_structs_container_name_tupple), content_type='text/html')
@@ -76,4 +77,4 @@ def run_ui_web_server(q, data_descriptors_factory: DataDescriptorsFactory):
     app.add_routes([web.get('/', server.handle),
                     web.post('/set_values', server.set_value)])
 
-    web.run_app(app, port=8080)
+    web.run_app(app, port=8081)
