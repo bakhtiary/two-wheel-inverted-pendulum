@@ -6,9 +6,7 @@ from server.data_descriptors import DataDescriptors, DataDescriptorsFactory
 
 
 class Client_Handler:
-    def __init__(self, reader_format, writer_format, queue, ddf: DataDescriptorsFactory):
-        self.reader_format = reader_format
-        self.writer_format = writer_format
+    def __init__(self, queue, ddf: DataDescriptorsFactory):
         self.queue = queue
         self.ddf = ddf
 

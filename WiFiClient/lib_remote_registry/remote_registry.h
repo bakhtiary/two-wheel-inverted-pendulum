@@ -1,32 +1,67 @@
+#include <WiFi.h>
+
 struct CommunicationData{
   int id;
+  virtual String toString();
 };
 
+template <int MAX_REGISTRY_SIZE>
+class CommunicationChannel{
+  String host;
+  int port;
+  CommunicationData * communicationDatas[MAX_REGISTRY_SIZE];
+  int communicationSizes[MAX_REGISTRY_SIZE];
+  
+  public: 
+    WiFiClient client;
 
-struct Data1: CommunicationData{
-  int x;
-  int y;
-  int z;
-  Data1(int id=1,int x=2,int y=3,int z=4){
-    this->id = id;
-    this->x = x;
-    this->y = y;
-    this->z = z;
+  CommunicationChannel(const char * _host,const int _port){
+    host = _host;
+    port = _port;
   }
-  String toString(){
-    return String("")+id+ " " + x + " " + y + " " + z + " ";
+
+  bool init(){
+    client.connect(host.c_str(), port);
+    return client.connected();
   }
-};
+  
+  void send_data(const CommunicationData & data_to_send, int data_size){
+    if (!client.connected()){
+        Serial.println(">>> client disconnected !");
+        client.stop();
+        client.connect(host.c_str(), port);     
+    } else {
+      client.write((char*) & data_to_send, data_size);
+      unsigned long timeout = millis();
+    }
+  }
 
-struct Data2: CommunicationData{
-  int a;
-  int b;
-  int c;
-  float d;
-  Data2(int id=2, int a=3, int b=4, int c=5, float d=0.6):a(a),b(b),c(c),d(d){this->id = id;}
-};
+  void register_data(CommunicationData * cd, int cd_size){
+    
+    if (cd->id > MAX_REGISTRY_SIZE){
+      Serial.println("error cd->id > MAX_REGISTRY_SIZE");
+    }
+    if (communicationSizes[cd->id] == 0){
+      Serial.println("error communicationSizes[cd->id] == 0");
+    }
 
-struct TimeData: CommunicationData{
-  int passed_time;
-  TimeData(int id=3, int passed_time=0):passed_time(passed_time){this->id = id;}
+    communicationDatas[cd->id] = cd;
+    communicationSizes[cd->id] = cd_size;
+  }
+  CommunicationData * update_registers(){
+    if(client.available()){
+      int id;
+      client.readBytes((char*) &id,sizeof(int));
+      
+      if(id >= MAX_REGISTRY_SIZE || communicationSizes[id] == 0 ){
+        Serial.println("error id >= MAX_REGISTRY_SIZE || communicationSizes[id] == 0");
+      }
+      else{
+        client.readBytes(((char*) communicationDatas[id])+sizeof(int),communicationSizes[id]-sizeof(int));
+        Serial.println(String("updated id") + id );
+        return communicationDatas[id];
+      }
+    } 
+    return 0;
+  }
 };

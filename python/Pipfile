@@ -14,6 +14,7 @@ moderngl-window = "*"
 opencv-contrib-python = "*"
 pywavefront = "*"
 python-dotenv = "*"
+onnx = "*"
 
 [dev-packages]
 
