@@ -20,14 +20,17 @@ class Client_Handler:
             count = 0
             while True:
                 count += 1
-                incoming_data = asyncio.wait_for(reader.read(4086), )
-                request = dd.parse_incoming_data(incoming_data)
-                for r in request:
-                    output.write(f"{r}\n")
-                    output.flush()
+                try:
+                    incoming_data = await asyncio.wait_for(reader.read(4086), 0.5)
+                    request = dd.parse_incoming_data(incoming_data)
+                    for r in request:
+                        output.write(f"{r}\n")
+                        output.flush()
 
-                if count % 100 == 0:
-                    print(f"processed {count} logs.")
+                    if count % 100 == 0:
+                        print(f"processed {count} logs.")
+                except Exception :
+                    pass
 
                 if not self.queue.empty():
                     print("sending stuff!")
@@ -36,6 +39,5 @@ class Client_Handler:
                     bytes_to_send = dd.build(container_to_send)
                     writer.write(bytes_to_send)
                     await writer.drain()
-
                 else:
-                    print("not sending stuff")
+                    pass
