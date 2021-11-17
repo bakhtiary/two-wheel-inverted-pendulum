@@ -1,5 +1,5 @@
 import asyncio
-from asyncio import StreamReader, StreamWriter
+from asyncio import StreamReader, StreamWriter, shield
 
 from construct import Int32ul
 
@@ -19,9 +19,9 @@ class Client_Handler:
 
             count = 0
             while True:
-                count += 1
                 try:
-                    incoming_data = await asyncio.wait_for(reader.read(4086), 0.5)
+                    incoming_data = await asyncio.shield(asyncio.wait_for(reader.read(4086), 0.5))
+                    count += 1
                     request = dd.parse_incoming_data(incoming_data)
                     for r in request:
                         output.write(f"{r}\n")
@@ -31,11 +31,8 @@ class Client_Handler:
                         print(f"processed {count} logs.")
                 except Exception :
                     pass
-
-                if not self.queue.empty():
-                    print("sending stuff!")
+                while not self.queue.empty():
                     container_to_send = self.queue.get()
-                    print(container_to_send)
                     bytes_to_send = dd.build(container_to_send)
                     writer.write(bytes_to_send)
                     await writer.drain()

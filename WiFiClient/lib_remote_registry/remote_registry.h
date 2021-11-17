@@ -31,7 +31,7 @@ class CommunicationChannel{
         client.stop();
         client.connect(host.c_str(), port);     
     } else {
-      client.write((char*) & data_to_send, data_size);
+      client.write(((char*) &data_to_send) + sizeof(int), data_size-sizeof(int));/*vtable takes up 4 bytes*/
       unsigned long timeout = millis();
     }
   }
@@ -60,7 +60,10 @@ class CommunicationChannel{
         Serial.println("error id >= MAX_REGISTRY_SIZE || communicationSizes[id] == 0");
       }
       else{
-        client.readBytes(((char*) communicationDatas[id])+sizeof(int),communicationSizes[id]-sizeof(int));
+        client.readBytes((
+          (char*) communicationDatas[id])+sizeof(int)*2,/*one for vtable one for id*/
+          communicationSizes[id] - sizeof(int)*2  /*one for vtable one for id*/
+        );
         Serial.println(String("updated id") + id );
         return communicationDatas[id];
       }
