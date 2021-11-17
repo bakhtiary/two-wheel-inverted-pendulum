@@ -1,0 +1,16 @@
+//const char* ssid     = "MIWIFI_jTA4";
+//const char* password = 
+
+//const char* ssid     = "not_available_2g";
+//const char* password = "
+
+//const char* ssid     = "Guest";
+//const char* password = 0;
+
+const char* ssid     = "ROG_PhoneII_4361";
+const char* password = 
+
+//const char * host_ip    = "192.168.1.134";
+//const char * host_ip    = "192.168.1.52";
+const char * host_ip    = "192.168.43.99";
+const int host_port = 12345;
