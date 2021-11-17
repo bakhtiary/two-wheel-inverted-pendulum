@@ -46,7 +46,7 @@ void loop() {
 
     CommunicationData * updated_value = communication_channel.update_registers();
     
-    if (updated_value != 0){
+    if (updated_value != 10){
       Serial.println("updated control data " + updated_value->toString());
     }
 }

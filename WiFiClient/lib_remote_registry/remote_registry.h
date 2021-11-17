@@ -5,19 +5,21 @@ struct CommunicationData{
   virtual String toString();
 };
 
-template <int MAX_REGISTRY_SIZE>
 class CommunicationChannel{
   String host;
   int port;
-  CommunicationData * communicationDatas[MAX_REGISTRY_SIZE];
-  int communicationSizes[MAX_REGISTRY_SIZE];
+  int MAX_REGISTRY_SIZE;
+  CommunicationData ** communicationDatas;
+  int * communicationSizes;
   
   public: 
     WiFiClient client;
 
-  CommunicationChannel(const char * _host,const int _port){
-    host = _host;
-    port = _port;
+  CommunicationChannel(const char * host,const int port, int MAX_REGISTRY_SIZE):
+  host(host), port(port), MAX_REGISTRY_SIZE(MAX_REGISTRY_SIZE)
+  {
+    communicationDatas = new CommunicationData * [MAX_REGISTRY_SIZE]();
+    communicationSizes = new int [MAX_REGISTRY_SIZE]();
   }
 
   bool init(){
@@ -38,11 +40,13 @@ class CommunicationChannel{
 
   void register_data(CommunicationData * cd, int cd_size){
     
-    if (cd->id > MAX_REGISTRY_SIZE){
-      Serial.println("error cd->id > MAX_REGISTRY_SIZE");
+    if (cd->id >= MAX_REGISTRY_SIZE || cd->id < 0){
+      Serial.println("error cd->id >= MAX_REGISTRY_SIZE || MAX_REGISTRY_SIZE < 0.");
+      Serial.println(String("id is ") + cd->id + " MAX_REGISTRY_SIZE is " + MAX_REGISTRY_SIZE );
     }
     if (communicationSizes[cd->id] != 0){ // already set
       Serial.println("error communicationSizes[cd->id] != 0");
+      Serial.println(cd->id);
     }
 
     communicationDatas[cd->id] = cd;
@@ -56,8 +60,9 @@ class CommunicationChannel{
       int id;
       client.readBytes((char*) &id,sizeof(int));
       
-      if(id >= MAX_REGISTRY_SIZE || communicationSizes[id] == 0 ){
-        Serial.println("error id >= MAX_REGISTRY_SIZE || communicationSizes[id] == 0");
+      if(id >= MAX_REGISTRY_SIZE || communicationSizes[id] == 0 || id < 0){
+        Serial.println("error id >= MAX_REGISTRY_SIZE || communicationSizes[id] == 0 || id < 0");
+        Serial.println(String("ID is ") + id + " MAX_REGISTRY_SIZE is " + MAX_REGISTRY_SIZE + " communicationSizes[id] is " + communicationSizes[id]);
       }
       else{
         client.readBytes((

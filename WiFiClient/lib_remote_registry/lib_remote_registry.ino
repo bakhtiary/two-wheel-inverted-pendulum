@@ -7,7 +7,7 @@ struct SendingData3{
   int b2;
 };
 
-CommunicationChannel<10> communication_channel{host_ip, host_port};
+CommunicationChannel communication_channel{host_ip, host_port, 10};
 
 Data1 * data1;
 Data2 * data2;
@@ -17,7 +17,8 @@ void setup() {
 
     Serial.begin(115200);
     delay(10);
-
+    Serial.println(ssid);
+    
     WiFi.begin(ssid, password);
 
     while (WiFi.status() != WL_CONNECTED) {
