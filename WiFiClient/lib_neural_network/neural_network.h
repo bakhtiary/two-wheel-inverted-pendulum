@@ -1,6 +1,8 @@
 struct TransferValues{
   int len;
   float * values;
+  TransferValues(int len, float * values):len(len), values(values){}
+  
   bool nearly_equals(float * other_values){
     for(int i = 0; i < len; i++){
       float diff = values[i] - other_values[i];

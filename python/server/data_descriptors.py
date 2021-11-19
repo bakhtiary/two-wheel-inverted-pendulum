@@ -2,7 +2,7 @@ import os
 import re
 from io import BytesIO
 
-from construct import Struct, Int32ul, Float32l, Container, Enum, Switch, this, GreedyRange, Union
+from construct import Struct, Int32ul, Float32l, Container, Enum, Switch, this, GreedyRange, Union, ListContainer
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -76,7 +76,7 @@ def read_structs(descriptor_lines):
                 type_converters = {}
                 current_id = None
                 for part in signature.split(","):
-                    match = re.search("\s*(\w+)\s+(\w+)\s*=\s*(\S+)", part)
+                    match = re.search("\s*(\w+)\s+(\w+)\s*=\s*(\d+)", part)
                     if match:
                         type, var_name, value_string = match.groups()
                         if type == "int":
@@ -97,10 +97,18 @@ def read_structs(descriptor_lines):
                         struct_params.append(param)
                         default_values[var_name] = value
                         type_converters[var_name] = type_converter
+                    elif "float_payload_len" in signature:
+                        struct_params.append("payload" / Struct("length" / Int32ul, "payload" / Float32l[this.length]))
+                        default_values["payload"] = "0.0,0.0"
+                        type_converters["payload"] = floatListContainerMaker
                     else:
-                        print(f"no match in part {part}")
+                        print(f"no match in part {part} in signature {signature}")
                 if current_id in id_maps_to_structs_container_name_tupple:
                     print(f"Warning replicated id: {current_id}")
                 id_maps_to_structs_container_name_tupple[current_id] = (Struct(*struct_params), Container(**default_values), register_name, type_converters)
 
     return id_maps_to_structs_container_name_tupple
+
+def floatListContainerMaker(x):
+    list_of_floats = ListContainer(map(float, x.split(",")))
+    return Container(length=len(list_of_floats), payload=list_of_floats)

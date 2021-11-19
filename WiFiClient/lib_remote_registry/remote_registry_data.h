@@ -34,3 +34,19 @@ struct TimeData: CommunicationData{
   }
 
 };
+
+template <int EXTRA_PAYLOAD_LEN>
+struct VarData: CommunicationData{
+  int float_payload_len=EXTRA_PAYLOAD_LEN;
+  float payload[EXTRA_PAYLOAD_LEN];
+  VarData(int id=4,int float_payload_len=EXTRA_PAYLOAD_LEN){this->id = id;}
+  String toString(){
+    String retval = "";
+    for(int i = 0; i < float_payload_len; i++){
+      retval += payload[i];
+      retval += " ";
+    }
+    return String("") + id + " len " + float_payload_len + " values " + retval;
+  }
+
+};

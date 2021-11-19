@@ -11,6 +11,7 @@ CommunicationChannel communication_channel{host_ip, host_port, 10};
 
 Data1 * data1;
 Data2 * data2;
+VarData<10> * data3;
 bool first_connection_succeeded;
 void setup() {
 
@@ -32,18 +33,21 @@ void setup() {
 
     data1 = new Data1();
     data2 = new Data2();
+    data3 = new VarData<10>();
     first_connection_succeeded = communication_channel.init();
     Serial.println(first_connection_succeeded);
 
     communication_channel.register_data(data1, sizeof(Data1));
     communication_channel.register_data(data2, sizeof(Data2));
-    
+    communication_channel.register_data(data3, sizeof(data3));
 }
 
 void loop() {
   TimeData timedata(3,millis());
   communication_channel.send_data(timedata,sizeof(timedata));
-  communication_channel.update_registers();
-  Serial.println(data1->toString());
+  CommunicationData * register_updated = communication_channel.update_registers();
+  if(register_updated != 0){
+    Serial.println(register_updated->toString());
+  }
   delay(500);
 }

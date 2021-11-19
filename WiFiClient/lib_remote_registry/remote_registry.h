@@ -56,10 +56,9 @@ class CommunicationChannel{
     Serial.println("checking registers");
 
     if(client.available()){
-      Serial.println("data is here");
       int id;
       client.readBytes((char*) &id,sizeof(int));
-      
+      Serial.println(String("data is here with id ") + id);
       if(id >= MAX_REGISTRY_SIZE || communicationSizes[id] == 0 || id < 0){
         Serial.println("error id >= MAX_REGISTRY_SIZE || communicationSizes[id] == 0 || id < 0");
         Serial.println(String("ID is ") + id + " MAX_REGISTRY_SIZE is " + MAX_REGISTRY_SIZE + " communicationSizes[id] is " + communicationSizes[id]);
