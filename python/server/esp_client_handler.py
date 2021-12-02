@@ -1,8 +1,5 @@
 import asyncio
-from asyncio import StreamReader, StreamWriter, shield
-
-from construct import Int32ul
-
+from asyncio import StreamReader, StreamWriter
 from server.data_descriptors import DataDescriptors, DataDescriptorsFactory
 
 

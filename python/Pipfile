@@ -15,6 +15,7 @@ opencv-contrib-python = "*"
 pywavefront = "*"
 python-dotenv = "*"
 onnx = "*"
+paho-mqtt = "*"
 
 [dev-packages]
 

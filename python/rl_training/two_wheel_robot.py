@@ -26,7 +26,7 @@ class TwoWheelRobot(mujoco_env.MujocoEnv, utils.EzPickle):
             ob,
             reward,
             done,
-            dict(done_reward=done_reward, movement_reward=movement_reward, action_reward = action_reward),
+            dict(done_reward=done_reward, movement_reward=movement_reward, action_reward=action_reward),
         )
 
     def _get_obs(self):
