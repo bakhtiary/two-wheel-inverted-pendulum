@@ -1,0 +1,4 @@
+
+RemoteNetwork.Log.msg               max_size:128
+RemoteNetwork.NumbersArray.values   max_count:128 
+
