@@ -4,7 +4,7 @@ import numpy as np
 import tflearn
 
 import ddpgtf.ddpgtf2WithDataGetter as ddpg
-from rl_training.two_wheel_robot import TwoWheelRobot
+from rl_training.two_wheel_robot import TwoWheelRobotSimulation
 
 
 class DataGetter:
@@ -62,7 +62,7 @@ class ConstStepDataGetter:
 def main():
     with tf.compat.v1.Session() as sess:
 
-        env = TwoWheelRobot()
+        env = TwoWheelRobotSimulation()
         # env = gym.envs.make("Pendulum-v0")
 
         seed = 1234

@@ -3,7 +3,7 @@ from gym import utils
 from gym.envs.mujoco import mujoco_env
 from gym.envs.robotics.rotations import quat_rot_vec
 
-class TwoWheelRobot(mujoco_env.MujocoEnv, utils.EzPickle):
+class TwoWheelRobotSimulation(mujoco_env.MujocoEnv, utils.EzPickle):
     def __init__(self):
         mujoco_env.MujocoEnv.__init__(self, "/home/amir/projects/two-wheel-inverted-pendulum/python/rl_training/models/two_wheel_robot.xml", 1)
         utils.EzPickle.__init__(self)

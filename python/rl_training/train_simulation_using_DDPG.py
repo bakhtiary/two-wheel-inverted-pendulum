@@ -1,9 +1,8 @@
 from stable_baselines3 import DDPG
 
-from rl_training.two_wheel_robot import TwoWheelRobot
+from rl_training.two_wheel_robot import TwoWheelRobotSimulation
 
-
-env = TwoWheelRobot()
+env = TwoWheelRobotSimulation()
 
 model = DDPG("MlpPolicy", env, verbose=1, )
 

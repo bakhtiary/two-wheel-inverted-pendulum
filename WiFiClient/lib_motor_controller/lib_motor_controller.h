@@ -34,7 +34,7 @@ class Motor{
 
     int appliedPower = constrain(abs(power) + low_power_offset, 0, 255);
 
-    Serial.println(String("applied_power")+appliedPower);
+//    Serial.println(String("applied_power")+appliedPower);
     ledcWrite(ledchannel_id, appliedPower);
 //   analogWrite(enpin, appliedPower);
 

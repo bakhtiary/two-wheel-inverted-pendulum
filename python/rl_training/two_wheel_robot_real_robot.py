@@ -1,39 +1,39 @@
 import numpy as np
-from gym import utils
-from gym.envs.mujoco import mujoco_env
-from gym.envs.robotics.rotations import quat_rot_vec
+from gym import Env
+from gym.vector.utils import spaces
 
-class TwoWheelRobot():
-    def __init__(self, policy):
-        self.policy = policy
+from rl_training.robot_controller import RobotController
 
-    def seed(self):
+
+class TwoWheelRobotReal(Env):
+
+    def __init__(self, robotController):
+        self.actor = None
+        high = 100
+        self.action_space = spaces.Box(-high, high, shape=[10], dtype=np.float32)
+        self.observation_space = spaces.Box(-high, high, shape=[10], dtype=np.float32)
+        self.robotController: RobotController = robotController
+        self.episode_time = 10
+        self.last_activity = None
+
+    def set_actor(self, actor):
+        self.actor = actor
+
+    def seed(self, seed=None):
         pass
 
     def step(self, a):
-        pass
-
-    def _get_obs(self):
         pass
 
     def reset(self):
         self._run_one_episode_and_record_it_()
         return
 
-    def render(self):
+    def render(self, mode="human"):
         pass
 
     def _run_one_episode_and_record_it_(self):
-        self._upload_weights_()
-        self._reset_robot_()
-        self._record_observations_()
-        pass
-
-    def _upload_weights_(self):
-        pass
-
-    def _reset_robot_(self):
-        pass
-
-    def _record_observations_(self):
-        pass
+        self.robotController.updateWeights(self.actor.parameters())
+        self.robotController.activate_nn_controller()
+        self.last_activity = self.robotController.record_activity(self.episode_time)
+        self.robotController.deactivate()

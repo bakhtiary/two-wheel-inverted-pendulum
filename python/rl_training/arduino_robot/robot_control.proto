@@ -1,0 +1,37 @@
+syntax = "proto2";
+
+
+package RobotControl;
+
+message ModelEvaluationRequest {
+  required NumbersArray input_values = 1;
+}
+
+message ModelUpdateRequest {
+  required int32 param_id = 1;
+  required int32 param_start_offset = 2;
+  required NumbersArray param_values = 3;
+}
+
+message ModelEvaluationResponse {
+  required NumbersArray output_values = 1;
+}
+
+message Log {
+  required string msg = 1; 
+  optional int32 milliseconds_since_start = 2;
+}
+
+message NumbersArray {
+  repeated float values = 1 [packed=true];
+}
+
+message ActivateController {
+  enum ControllerType {
+    DEACTIVATED = 0;
+    NEURAL_NET = 1;
+    PID = 2;
+  }
+
+  required ControllerType type = 2 [default = DEACTIVATED];
+}
