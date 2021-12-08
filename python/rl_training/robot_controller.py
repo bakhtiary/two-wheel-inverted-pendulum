@@ -7,7 +7,6 @@ class RobotController:
     def __init__(self, mqttClientHandle):
         self.mqttClientHandle = mqttClientHandle
 
-
     def updateWeights(self, id_param_pair_generator):
         CHUNK_SIZE = 32
         for id, params in enumerate(id_param_pair_generator):

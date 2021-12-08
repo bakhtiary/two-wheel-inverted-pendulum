@@ -10,8 +10,8 @@ class TwoWheelRobotReal(Env):
     def __init__(self, robotController):
         self.actor = None
         high = 100
-        self.action_space = spaces.Box(-high, high, shape=[10], dtype=np.float32)
-        self.observation_space = spaces.Box(-high, high, shape=[10], dtype=np.float32)
+        self.action_space = spaces.Box(-high, high, shape=[2], dtype=np.float32)
+        self.observation_space = spaces.Box(-high, high, shape=[12], dtype=np.float32)
         self.robotController: RobotController = robotController
         self.episode_time = 10
         self.last_activity = None

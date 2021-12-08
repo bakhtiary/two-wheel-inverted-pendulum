@@ -5,4 +5,7 @@ client = get_mqtt_client()
 
 robotController = RobotController(client)
 
-robotController.activate_pid_controller()
+robotController.activate_nn_controller()
+
+robotController.updateWeights()
+

@@ -8,7 +8,6 @@
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #include <lib_motor_controller.h>
-#include <data_sender.h>
 #define INTERRUPT_PIN 2  // use pin 2 on Arduino Uno & most boards
 #include "OTA.h"
 #include "MPU.h"
@@ -82,9 +81,11 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   setup_ota();
+  Serial.println("setting up mpu");
 
-  setup_mpu(mpu, dmpReady, mpuIntStatus, devStatus, packetSize, INTERRUPT_PIN);
-  
+//  setup_mpu(mpu, dmpReady, mpuIntStatus, devStatus, packetSize, INTERRUPT_PIN);
+  Serial.println("skipping setting up mpu - setting up motors");
+
   setup_motors();
   
 }
@@ -109,7 +110,7 @@ int loop_number = 0;
 void loop() {
   ArduinoOTA.handle();
   client.loop();
-
+  printf("looping \n ");
   if(loop_number == 0){
     motor1.low_power_offset = control_data.minimal_motor_power;
     motor2.low_power_offset = control_data.minimal_motor_power;
@@ -133,7 +134,6 @@ void loop() {
         nn_controller.control(ypr);
       }
 //      client.publish("robot_status/running_PID_control", String(" active controller: ") + active_controller + " " + power + " loop_number " + loop_number );
-
 
       time_t current_time = millis();    
 
