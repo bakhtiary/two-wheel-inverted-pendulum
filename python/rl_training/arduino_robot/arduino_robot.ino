@@ -51,14 +51,14 @@ int active_controller = RobotControl_ActivateController_ControllerType_DEACTIVAT
 
 void onConnectionEstablished(){
  
-  client.subscribe("mytopic/liveness", [](const String & topic, const String & payload) {
+  client.subscribe("robot_status/liveness", [](const String & topic, const String & payload) {
     client.executeDelayed(5 * 1000, []() {
-      client.publish("mytopic/liveness", String("I am alive, active controller is ") + active_controller);
+      client.publish("robot_status/liveness", String("I am alive, active controller is ") + active_controller);
     });
   });
 
   // Publish a message to "mytopic/test"
-  client.publish("mytopic/liveness", "This is a message"); // You can activate the retain flag by setting the third parameter to true
+  client.publish("robot_status/liveness", "This is a message"); // You can activate the retain flag by setting the third parameter to true
   
 
   client.subscribe("activate_controller_request", [](uint8_t* payload, unsigned int message_length) {
@@ -83,7 +83,7 @@ void setup() {
   setup_ota();
   Serial.println("setting up mpu");
 
-//  setup_mpu(mpu, dmpReady, mpuIntStatus, devStatus, packetSize, INTERRUPT_PIN);
+  setup_mpu(mpu, dmpReady, mpuIntStatus, devStatus, packetSize, INTERRUPT_PIN);
   Serial.println("skipping setting up mpu - setting up motors");
 
   setup_motors();
@@ -95,7 +95,7 @@ Control_Data control_data{650.0, 5.0, 600.0, 140.0, 0, 0};
 Motor motor1 = Motor(25,33,32,1,20);
 Motor motor2 = Motor(26,27,14,2,20);
 
-Pid_Controller pid_controller(control_data, motor1, motor2);
+Pid_Controller pid_controller(control_data, motor1, motor2, client);
 
 
 NN_Controller nn_controller(motor1, motor2);
@@ -106,7 +106,7 @@ void setup_motors(){
 }
 
 int loop_number = 0;
-
+int loop_count_since_dmp_ready = 0;
 void loop() {
   ArduinoOTA.handle();
   client.loop();
@@ -119,10 +119,13 @@ void loop() {
   loop_number += 1;
   time_t start_time = millis();
 
-  if (!dmpReady) return;
-
-
   if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) { // Get the Latest packet
+
+      if (loop_count_since_dmp_ready == 0){
+        client.publish("robot_status/warning", "we did not do extra loops before reading the next packet. The cpu can not handle this + loop number is " + String(loop_number));
+      }
+      loop_count_since_dmp_ready = 0;
+
 
       // display Euler angles in degrees
       mpu.dmpGetQuaternion(&q, fifoBuffer);
@@ -131,14 +134,14 @@ void loop() {
       if (active_controller == RobotControl_ActivateController_ControllerType_PID){
         pid_controller.control(ypr[1]);
       }else if (active_controller == RobotControl_ActivateController_ControllerType_NEURAL_NET){
-        nn_controller.control(ypr);
+        nn_controller.control(ypr,0,0);
       }
 //      client.publish("robot_status/running_PID_control", String(" active controller: ") + active_controller + " " + power + " loop_number " + loop_number );
 
       time_t current_time = millis();    
 
-
+  } else {
+    loop_count_since_dmp_ready += 1;
   }
-
   
 }

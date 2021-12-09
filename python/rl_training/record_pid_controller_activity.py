@@ -1,0 +1,26 @@
+import os
+import time
+
+import paho.mqtt.client
+
+from rl_training.mqtt_client import get_mqtt_client
+
+os.makedirs("logs", exist_ok=True)
+activity_file = open("logs/pid_controller_activity", "w+")
+
+def on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
+    print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
+    client.subscribe("robot_status/pid_result")  # Subscribe to the topic “digitest/test1”, receive any messages published on it
+
+
+def on_message(client, userdata, msg):  # The callback for when a PUBLISH message is received from the server.
+    activity_file.write(msg.payload.decode('utf-8') + "\n")
+
+client = paho.mqtt.client.Client(client_id="rl_agent")
+client.connect("0.0.0.0")
+client.on_connect = on_connect  # Define callback function for successful connection
+client.on_message = on_message  # Define callback function for receipt of a message
+
+client.loop_start()
+while True:
+    time.sleep(50)
