@@ -19,6 +19,23 @@ struct TransferValues{
     }
     return retval;
   }
+  String toJson(){
+    String retval = "[";
+    for(int i = 0; i < len; i++){
+      if (i > 0){
+          retval += ","; 
+      }
+      if (isnan (values[i])){
+          retval += "NaN";
+      }else{
+          retval += String(values[i]);
+      }
+    }
+    retval += "]";
+    return retval;
+  }
+
+  
   };
 
 
@@ -30,6 +47,10 @@ struct Stage{
   }
   virtual TransferValues * compute(TransferValues * input) = 0;
   virtual ~Stage(){}
+  
+  virtual String toString(){
+    return output->toString();
+  };
 
 };
 
@@ -38,6 +59,13 @@ struct Params {
     int class_id;  
     int len;
     float * values;
+    String toString(){
+    String retval = String("len: ")+len+" values:";
+    for(int i = 0; i < len; i++){
+      retval += String(" ") + values[i] ;
+    }
+    return retval;
+  }
 };
 
 struct FullyConnected: public Stage
@@ -50,18 +78,35 @@ struct FullyConnected: public Stage
     int output_size,
     Params & weights,
     Params & biases
-  ): Stage(output_size), weights(weights), biases(biases){}
+  ): Stage(output_size), weights(weights), biases(biases){
+    input_size = weights.len / output_size;
+  }
 
   TransferValues * compute(TransferValues * input){
     for (int i = 0; i < output->len; i++){
       output->values[i] = biases.values[i];
       for (int j = 0; j < input->len; j++){
-        output->values[i] += input->values[j]*weights.values[j + i * input->len];
+        output->values[i] += input->values[j]*weights.values[j + i * input->len];       
       }
     }
     return output;
   };
 
+  String toString(){
+    String retval("weights: \n");
+    for(int i = 0; i < output->len; i++){
+      for (int j = 0; j < input_size; j++){
+        retval += String(weights.values[j + i * input_size]) + " ";
+      }
+      retval += "\n";
+    }
+    retval += ("\n biases: \n");
+    for(int i = 0; i < output->len; i++){
+        retval += String(biases.values[i]) + " ";
+    }
+    retval += "\n" + output->toString();
+    return retval;
+  }
   
 };
 
@@ -75,6 +120,7 @@ class Relu: public Stage{
     }
     return output;
   }
+  
 };
 
 class Tanh: public Stage{
@@ -107,5 +153,13 @@ class NeuralNetwork{
       values = stages[i]->compute(values);
     }
     return values;
+  }
+
+  String toString(){
+    String retval("");
+    for (int i = 0; i < len_stages; i++){
+      retval += stages[i]->toString();
+    }
+    return retval;
   }
 };

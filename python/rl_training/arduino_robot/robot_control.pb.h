@@ -17,19 +17,22 @@ typedef enum _RobotControl_ActivateController_ControllerType {
 } RobotControl_ActivateController_ControllerType;
 
 /* Struct definitions */
-typedef struct _RobotControl_NumbersArray {
-    pb_callback_t values;
-} RobotControl_NumbersArray;
-
 typedef struct _RobotControl_ActivateController {
+    bool has_run_id;
+    int32_t run_id;
     RobotControl_ActivateController_ControllerType type;
 } RobotControl_ActivateController;
 
 typedef struct _RobotControl_Log {
-    pb_callback_t msg;
+    char msg[128];
     bool has_milliseconds_since_start;
     int32_t milliseconds_since_start;
 } RobotControl_Log;
+
+typedef struct _RobotControl_NumbersArray {
+    pb_size_t values_count;
+    float values[128];
+} RobotControl_NumbersArray;
 
 typedef struct _RobotControl_ModelEvaluationRequest {
     RobotControl_NumbersArray input_values;
@@ -60,21 +63,22 @@ extern "C" {
 #define RobotControl_ModelEvaluationRequest_init_default {RobotControl_NumbersArray_init_default}
 #define RobotControl_ModelUpdateRequest_init_default {0, 0, RobotControl_NumbersArray_init_default}
 #define RobotControl_ModelEvaluationResponse_init_default {RobotControl_NumbersArray_init_default}
-#define RobotControl_Log_init_default            {{{NULL}, NULL}, false, 0}
-#define RobotControl_NumbersArray_init_default   {{{NULL}, NULL}}
-#define RobotControl_ActivateController_init_default {RobotControl_ActivateController_ControllerType_DEACTIVATED}
+#define RobotControl_Log_init_default            {"", false, 0}
+#define RobotControl_NumbersArray_init_default   {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define RobotControl_ActivateController_init_default {false, 0, RobotControl_ActivateController_ControllerType_DEACTIVATED}
 #define RobotControl_ModelEvaluationRequest_init_zero {RobotControl_NumbersArray_init_zero}
 #define RobotControl_ModelUpdateRequest_init_zero {0, 0, RobotControl_NumbersArray_init_zero}
 #define RobotControl_ModelEvaluationResponse_init_zero {RobotControl_NumbersArray_init_zero}
-#define RobotControl_Log_init_zero               {{{NULL}, NULL}, false, 0}
-#define RobotControl_NumbersArray_init_zero      {{{NULL}, NULL}}
-#define RobotControl_ActivateController_init_zero {_RobotControl_ActivateController_ControllerType_MIN}
+#define RobotControl_Log_init_zero               {"", false, 0}
+#define RobotControl_NumbersArray_init_zero      {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define RobotControl_ActivateController_init_zero {false, 0, _RobotControl_ActivateController_ControllerType_MIN}
 
 /* Field tags (for use in manual encoding/decoding) */
-#define RobotControl_NumbersArray_values_tag     1
+#define RobotControl_ActivateController_run_id_tag 1
 #define RobotControl_ActivateController_type_tag 2
 #define RobotControl_Log_msg_tag                 1
 #define RobotControl_Log_milliseconds_since_start_tag 2
+#define RobotControl_NumbersArray_values_tag     1
 #define RobotControl_ModelEvaluationRequest_input_values_tag 1
 #define RobotControl_ModelEvaluationResponse_output_values_tag 1
 #define RobotControl_ModelUpdateRequest_param_id_tag 1
@@ -103,20 +107,21 @@ X(a, STATIC,   REQUIRED, MESSAGE,  output_values,     1)
 #define RobotControl_ModelEvaluationResponse_output_values_MSGTYPE RobotControl_NumbersArray
 
 #define RobotControl_Log_FIELDLIST(X, a) \
-X(a, CALLBACK, REQUIRED, STRING,   msg,               1) \
+X(a, STATIC,   REQUIRED, STRING,   msg,               1) \
 X(a, STATIC,   OPTIONAL, INT32,    milliseconds_since_start,   2)
-#define RobotControl_Log_CALLBACK pb_default_field_callback
+#define RobotControl_Log_CALLBACK NULL
 #define RobotControl_Log_DEFAULT NULL
 
 #define RobotControl_NumbersArray_FIELDLIST(X, a) \
-X(a, CALLBACK, REPEATED, FLOAT,    values,            1)
-#define RobotControl_NumbersArray_CALLBACK pb_default_field_callback
+X(a, STATIC,   REPEATED, FLOAT,    values,            1)
+#define RobotControl_NumbersArray_CALLBACK NULL
 #define RobotControl_NumbersArray_DEFAULT NULL
 
 #define RobotControl_ActivateController_FIELDLIST(X, a) \
+X(a, STATIC,   OPTIONAL, INT32,    run_id,            1) \
 X(a, STATIC,   REQUIRED, UENUM,    type,              2)
 #define RobotControl_ActivateController_CALLBACK NULL
-#define RobotControl_ActivateController_DEFAULT NULL
+#define RobotControl_ActivateController_DEFAULT (const pb_byte_t*)"\x08\x00\x00"
 
 extern const pb_msgdesc_t RobotControl_ModelEvaluationRequest_msg;
 extern const pb_msgdesc_t RobotControl_ModelUpdateRequest_msg;
@@ -134,12 +139,12 @@ extern const pb_msgdesc_t RobotControl_ActivateController_msg;
 #define RobotControl_ActivateController_fields &RobotControl_ActivateController_msg
 
 /* Maximum encoded size of messages (where known) */
-/* RobotControl_ModelEvaluationRequest_size depends on runtime parameters */
-/* RobotControl_ModelUpdateRequest_size depends on runtime parameters */
-/* RobotControl_ModelEvaluationResponse_size depends on runtime parameters */
-/* RobotControl_Log_size depends on runtime parameters */
-/* RobotControl_NumbersArray_size depends on runtime parameters */
-#define RobotControl_ActivateController_size     2
+#define RobotControl_ModelEvaluationRequest_size 643
+#define RobotControl_ModelUpdateRequest_size     665
+#define RobotControl_ModelEvaluationResponse_size 643
+#define RobotControl_Log_size                    141
+#define RobotControl_NumbersArray_size           640
+#define RobotControl_ActivateController_size     13
 
 #ifdef __cplusplus
 } /* extern "C" */

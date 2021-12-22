@@ -32,6 +32,7 @@ message ActivateController {
     NEURAL_NET = 1;
     PID = 2;
   }
-
+  
+  optional int32 run_id = 1 [default = 0];
   required ControllerType type = 2 [default = DEACTIVATED];
 }

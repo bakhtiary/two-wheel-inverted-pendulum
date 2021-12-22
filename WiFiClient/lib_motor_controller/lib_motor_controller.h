@@ -30,7 +30,7 @@ class Motor{
   void setPower(int power){
 
     digitalWrite(pin1, power>0?HIGH:LOW);
-    digitalWrite(pin2, power<=0?HIGH:LOW);
+    digitalWrite(pin2, power<0?HIGH:LOW);
 
     int appliedPower = constrain(abs(power) + low_power_offset, 0, 255);
 

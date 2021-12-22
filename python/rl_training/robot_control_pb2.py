@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13robot_control.proto\x12\x0cRobotControl\"J\n\x16ModelEvaluationRequest\x12\x30\n\x0cinput_values\x18\x01 \x02(\x0b\x32\x1a.RobotControl.NumbersArray\"t\n\x12ModelUpdateRequest\x12\x10\n\x08param_id\x18\x01 \x02(\x05\x12\x1a\n\x12param_start_offset\x18\x02 \x02(\x05\x12\x30\n\x0cparam_values\x18\x03 \x02(\x0b\x32\x1a.RobotControl.NumbersArray\"L\n\x17ModelEvaluationResponse\x12\x31\n\routput_values\x18\x01 \x02(\x0b\x32\x1a.RobotControl.NumbersArray\"4\n\x03Log\x12\x0b\n\x03msg\x18\x01 \x02(\t\x12 \n\x18milliseconds_since_start\x18\x02 \x01(\x05\"\"\n\x0cNumbersArray\x12\x12\n\x06values\x18\x01 \x03(\x02\x42\x02\x10\x01\"\x9c\x01\n\x12\x41\x63tivateController\x12J\n\x04type\x18\x02 \x02(\x0e\x32/.RobotControl.ActivateController.ControllerType:\x0b\x44\x45\x41\x43TIVATED\":\n\x0e\x43ontrollerType\x12\x0f\n\x0b\x44\x45\x41\x43TIVATED\x10\x00\x12\x0e\n\nNEURAL_NET\x10\x01\x12\x07\n\x03PID\x10\x02'
+  serialized_pb=b'\n\x13robot_control.proto\x12\x0cRobotControl\"J\n\x16ModelEvaluationRequest\x12\x30\n\x0cinput_values\x18\x01 \x02(\x0b\x32\x1a.RobotControl.NumbersArray\"t\n\x12ModelUpdateRequest\x12\x10\n\x08param_id\x18\x01 \x02(\x05\x12\x1a\n\x12param_start_offset\x18\x02 \x02(\x05\x12\x30\n\x0cparam_values\x18\x03 \x02(\x0b\x32\x1a.RobotControl.NumbersArray\"L\n\x17ModelEvaluationResponse\x12\x31\n\routput_values\x18\x01 \x02(\x0b\x32\x1a.RobotControl.NumbersArray\"4\n\x03Log\x12\x0b\n\x03msg\x18\x01 \x02(\t\x12 \n\x18milliseconds_since_start\x18\x02 \x01(\x05\"\"\n\x0cNumbersArray\x12\x12\n\x06values\x18\x01 \x03(\x02\x42\x02\x10\x01\"\xaf\x01\n\x12\x41\x63tivateController\x12\x11\n\x06run_id\x18\x01 \x01(\x05:\x01\x30\x12J\n\x04type\x18\x02 \x02(\x0e\x32/.RobotControl.ActivateController.ControllerType:\x0b\x44\x45\x41\x43TIVATED\":\n\x0e\x43ontrollerType\x12\x0f\n\x0b\x44\x45\x41\x43TIVATED\x10\x00\x12\x0e\n\nNEURAL_NET\x10\x01\x12\x07\n\x03PID\x10\x02'
 )
 
 
@@ -49,8 +49,8 @@ _ACTIVATECONTROLLER_CONTROLLERTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=498,
-  serialized_end=556,
+  serialized_start=517,
+  serialized_end=575,
 )
 _sym_db.RegisterEnumDescriptor(_ACTIVATECONTROLLER_CONTROLLERTYPE)
 
@@ -245,7 +245,14 @@ _ACTIVATECONTROLLER = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='type', full_name='RobotControl.ActivateController.type', index=0,
+      name='run_id', full_name='RobotControl.ActivateController.run_id', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=True, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='RobotControl.ActivateController.type', index=1,
       number=2, type=14, cpp_type=8, label=2,
       has_default_value=True, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -265,7 +272,7 @@ _ACTIVATECONTROLLER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=400,
-  serialized_end=556,
+  serialized_end=575,
 )
 
 _MODELEVALUATIONREQUEST.fields_by_name['input_values'].message_type = _NUMBERSARRAY
