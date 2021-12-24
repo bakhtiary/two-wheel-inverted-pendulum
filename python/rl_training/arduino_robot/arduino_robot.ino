@@ -2,14 +2,12 @@
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
-#include <ArduinoOTA.h>
 #include "robot_control.pb.h"
 #include "EspMQTTClient.h"
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #include <lib_motor_controller.h>
 #define INTERRUPT_PIN 2  // use pin 2 on Arduino Uno & most boards
-#include "OTA.h"
 #include "MPU.h"
 #include "Wire.h"
 #include "pid_controller.h"
@@ -108,7 +106,6 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  setup_ota();
   Serial.println("setting up mpu");
 
   setup_mpu(mpu, dmpReady, mpuIntStatus, devStatus, packetSize, INTERRUPT_PIN);
@@ -135,9 +132,7 @@ void setup_motors(){
 
 int loop_count_since_dmp_ready = 0;
 void loop() {
-  ArduinoOTA.handle();
-  client.loop();
-  printf("looping \n ");
+  Serial.println("looping" );
   if(loop_number == 0){
     motor1.low_power_offset = control_data.minimal_motor_power;
     motor2.low_power_offset = control_data.minimal_motor_power;
@@ -171,10 +166,12 @@ void loop() {
       String reward_string = isnan(reward)?"NaN":String(reward);
 
 //      String inputs_json = inputs.toJson() ;
-      inputs.toJson() + ta.output->toJson()
+      String inputs_json = inputs.toJson() + ", \"output_values\": " + ta.output->toJson();
+
+      Serial.println("sending data" );
+      Serial.println(inputs.toJson());
       
-      //", \"output_values\": " +
-      client.publish("robot/reward", String(" {\"PID_observation\": ") +  ); //+ ", \"reward\": "  + reward_string + ", \"loop_number\": " + loop_number + ", \"run_id\": " + run_id + "}");
+      client.publish("robot/reward", inputs_json);
 
       loop_number += 1;
 
