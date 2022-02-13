@@ -5,3 +5,6 @@ server/*.log
 /MJDATA.TXT
 /MJMODEL.TXT
 /MUJOCO_LOG.TXT
+/mjkey.txt
+*.onnx
+*.zip
