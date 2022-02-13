@@ -2,3 +2,6 @@
 .env
 server/*.log
 **/__pycache__/
+/MJDATA.TXT
+/MJMODEL.TXT
+/MUJOCO_LOG.TXT
