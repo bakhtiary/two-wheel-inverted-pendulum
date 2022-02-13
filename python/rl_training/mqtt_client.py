@@ -1,8 +1,6 @@
 
 import paho.mqtt.client
 
-from rl_training import robot_control_pb2
-
 
 def get_mqtt_client():
 

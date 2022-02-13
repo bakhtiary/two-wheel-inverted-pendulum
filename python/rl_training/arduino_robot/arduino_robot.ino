@@ -170,9 +170,7 @@ void loop() {
 
       Serial.println("sending data" );
       Serial.println(inputs.toJson());
-      
       client.publish("robot/reward", inputs_json);
-
       loop_number += 1;
 
 //      client.publish("robot_status/running_PID_control", String(" active controller: ") + active_controller + " " + power + " loop_number " + loop_number );

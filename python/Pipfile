@@ -16,6 +16,9 @@ pywavefront = "*"
 python-dotenv = "*"
 onnx = "*"
 paho-mqtt = "*"
+dash = "*"
+plotly = "*"
+tensorflow = "*"
 
 [dev-packages]
 

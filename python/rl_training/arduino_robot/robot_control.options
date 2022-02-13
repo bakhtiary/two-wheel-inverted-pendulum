@@ -1,0 +1,4 @@
+
+RobotControl.Log.msg               max_size:128
+RobotControl.NumbersArray.values   max_count:128 
+
