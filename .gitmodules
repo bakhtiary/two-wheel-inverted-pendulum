@@ -1,0 +1,9 @@
+[submodule "python/rl_training/DDPG"]
+	path = python/rl_training/floodsung_ddpg
+	url = https://github.com/songrotek/DDPG.git
+[submodule "python/floodsung_ddpg"]
+	path = python/floodsung_ddpg
+	url = https://github.com/floodsung/DDPG.git
+[submodule "python/samuelmat_ddpg"]
+	path = python/samuelmat_ddpg
+	url = https://github.com/samuelmat19/DDPG-tf2.git
